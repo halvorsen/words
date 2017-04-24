@@ -45,6 +45,9 @@ class Tile: UIView {
                 self.mySize = .medium
             case .board:
                 self.mySize = .small
+                if Set.isZoomed {
+                    self.mySize = .large
+                }
             }
         }
     }

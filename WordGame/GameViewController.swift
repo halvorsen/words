@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, UIGestureRecognizerDelegate {
+class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     let myColor = CustomColor()
     let myBoard = Board.sharedInstance
     var pan = UIPanGestureRecognizer()
@@ -48,6 +48,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         playButton.layer.borderColor = UIColor.black.cgColor
         playButton.setTitleColor(.black, for: .normal)
         view.addSubview(playButton)
+        myBoard.delegate = self
     }
     
     private func findTheString() -> String? {
@@ -86,7 +87,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         }
         if isSameRow {
             print("same row")
-            (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameRow(row: row, column: column)
+            (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameRow(row: smallestRow, column: smallestColumn)
             print("bools: \(bool1) \(bool2) \(bool3)")
             if bool1 == true {
                 smallestColumn -= 1
@@ -133,7 +134,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             }
         } else if isSameColumn {
             print("same column")
-            (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameColumn(row: row, column: column)
+            (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameColumn(row: smallestRow, column: smallestColumn)
             if bool1 == true {
                 smallestColumn -= 1
                 if bool2 == true {
@@ -145,6 +146,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             }
             var dontQuit = true
             while dontQuit {
+                print("in while loop 1")
                 var count = 1
                 outerLoop: for tile in allTiles {
                     if tile.row != nil {
@@ -175,6 +177,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         var three = false
         for tile in allTiles {
             if tile.column != nil {
+                print("Tile Column: \(tile.column)")
+                print("column: \(column)")
+                print("tile.row: \(tile.row!)")
+                print("row: \(row)")
                 if tile.column! + 1 == column && tile.row! == row {
                     one = true
                 }
@@ -254,7 +260,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         var oneIndexRow = -1
         print("rowLow: \(rowLow)")
         print("rowHigh: \(rowHigh)")
-        while oneIndexRow < rowLow || oneIndexRow > rowHigh || oneIndex == randomStartSlotIndex || oneIndex == randomEndSlotIndex {
+        while oneIndexRow < rowLow || oneIndexRow > rowHigh || oneIndex == randomStartSlotIndex || oneIndex == randomEndSlotIndex || oneIndex == randomStartSlotIndex + 1 || oneIndex == randomStartSlotIndex - 1 || oneIndex == randomStartSlotIndex + 15 || oneIndex == randomEndSlotIndex - 1 || oneIndex == randomEndSlotIndex + 1 || oneIndex == randomEndSlotIndex - 15 {
+            print("inwhileloop")
             oneIndex = Int(arc4random_uniform(224))
             print("TRY")
             print(oneIndex)
@@ -387,11 +394,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
                     if slotView.frame.contains(gesture.location(in: myBoard)) && !slotView.isOccupied {
                         slotView.isOccupied = true
                         movingTile?.slotsIndex = ct
-                        movingTile?.mySize = .small
+                       // movingTile?.mySize = .small
                         movingTile?.myWhereInPlay = .board
                         movingTile?.row = slotView.row
                         movingTile?.column = slotView.column
-                        dropTileWhereItBelongs(tile: movingTile!)
+                        
+                      //  zoomInToBoard(point: slotView.center)
+                        myBoard.zoomIn()
+                        Set.isZoomed = true
+                        for tile in allTiles {
+                        dropTileWhereItBelongs(tile: tile)
+                        }
+                        refreshSizes()
                         movingTile = nil
                         break outer
                     }
@@ -408,6 +422,16 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
+//    func zoomInToBoard(point: CGPoint) {
+//        myBoard.zoomScale = 2.0
+//    }
+//    
+//    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+//        return myBoard.v
+//    }
+    
+ 
+    
     func dropTileWhereItBelongs(tile: Tile) {
         switch tile.myWhereInPlay {
         case .board:
@@ -415,8 +439,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             myBoard.addSubview(tile)
             let row = tile.row!
             let column = tile.column!
-            let x = 0.5*sw/375 + CGFloat(column)*23*sw/375
-            let y = 0.5*sw/375 + CGFloat(row)*23*sw/375
+            var x = 0.5*sw/375 + CGFloat(column)*23*sw/375
+            var y = 0.5*sw/375 + CGFloat(row)*23*sw/375
+            if Set.isZoomed {
+                let scale = myBoard.scale
+                x = scale*(0.5*sw/375 + CGFloat(column)*23*sw/375)
+                y = scale*(0.5*sw/375 + CGFloat(row)*23*sw/375)
+            }
             tile.frame.origin = CGPoint(x: x, y: y)
             
         case .atBat:
@@ -698,6 +727,23 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             break
         }
         return myTile.mySymbol
+    }
+    
+    
+    func refreshSizes() {
+        for tile in allTiles {
+            switch tile.myWhereInPlay {
+            case .atBat:
+                tile.mySize = .large
+            case .onDeck:
+                tile.mySize = .medium
+            case .board:
+                tile.mySize = .small
+                if Set.isZoomed {
+                    tile.mySize = .large
+                }
+            }
+        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

@@ -27,3 +27,9 @@ struct CustomColor {
     let white245 = UIColor(colorLiteralRed: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
     let white234 = UIColor(colorLiteralRed: 227/255, green: 227/255, blue: 227/255, alpha: 1.0)
 }
+
+public struct Set {
+    
+    public static var isZoomed: Bool = false
+
+}
