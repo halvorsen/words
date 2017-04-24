@@ -43,8 +43,8 @@ class Tile: UIView {
                 self.mySize = .large
             case .onDeck:
                 self.mySize = .medium
-            default:
-                break
+            case .board:
+                self.mySize = .small
             }
         }
     }

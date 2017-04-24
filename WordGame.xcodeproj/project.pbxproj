@@ -17,6 +17,7 @@
 		0625A52D1EAABB460064E97B /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A52C1EAABB460064E97B /* Tile.swift */; };
 		0625A52F1EABA4880064E97B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A52E1EABA4880064E97B /* Extensions.swift */; };
 		0644A81D1EABBA890083A4A2 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81C1EABBA890083A4A2 /* Board.swift */; };
+		0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81E1EAD3CC00083A4A2 /* Slot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		0625A52C1EAABB460064E97B /* Tile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		0625A52E1EABA4880064E97B /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0644A81C1EABBA890083A4A2 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		0644A81E1EAD3CC00083A4A2 /* Slot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				0625A52B1EAABA9A0064E97B /* WordGame.entitlements */,
 				0625A5111EAAB9C20064E97B /* AppDelegate.swift */,
 				0625A5131EAAB9C20064E97B /* GameViewController.swift */,
+				0644A81E1EAD3CC00083A4A2 /* Slot.swift */,
 				0644A81C1EABBA890083A4A2 /* Board.swift */,
 				0625A52C1EAABB460064E97B /* Tile.swift */,
 				0625A52E1EABA4880064E97B /* Extensions.swift */,
@@ -177,6 +180,7 @@
 				0625A52F1EABA4880064E97B /* Extensions.swift in Sources */,
 				0625A5141EAAB9C20064E97B /* GameViewController.swift in Sources */,
 				0644A81D1EABBA890083A4A2 /* Board.swift in Sources */,
+				0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */,
 				0625A51A1EAAB9C20064E97B /* WordGame.xcdatamodeld in Sources */,
 				0625A5121EAAB9C20064E97B /* AppDelegate.swift in Sources */,
 				0625A52D1EAABB460064E97B /* Tile.swift in Sources */,
