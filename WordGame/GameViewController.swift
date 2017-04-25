@@ -49,6 +49,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         playButton.setTitleColor(.black, for: .normal)
         view.addSubview(playButton)
         myBoard.delegate = self
+        self.myBoard.showsHorizontalScrollIndicator = false
+        self.myBoard.showsVerticalScrollIndicator = false
     }
     
     private func findTheString() -> String? {
@@ -386,24 +388,45 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 let translation = gesture.translation(in: view)
                 movingTile?.center = CGPoint(x: (movingTile?.center.x)! + translation.x, y: (movingTile?.center.y)! + translation.y)
                 gesture.setTranslation(CGPoint(x:0,y:0), in: self.view)
+              //  print(myBoard.frame)
+                if myBoard.frame.contains(CGPoint(x: movingTile!.frame.origin.x + movingTile!.frame.width/2, y: movingTile!.frame.maxY)) && !movingTile!.isDescendant(of: myBoard) {
+                    movingTile!.removeFromSuperview()
+                    movingTile!.frame.origin.y -= myBoard.frame.origin.y - myBoard.contentOffset.y
+                    movingTile!.frame.origin.x += myBoard.contentOffset.x - myBoard.frame.origin.x
+                    myBoard.addSubview(movingTile!)
+                   // movingTile!.myWhereInPlay = .board
+                } else if !myBoard.bounds.contains(CGPoint(x: movingTile!.frame.origin.x + movingTile!.frame.width/2, y: movingTile!.frame.maxY)) && movingTile!.isDescendant(of: myBoard) {
+                    print("TRiggered")
+                    movingTile!.removeFromSuperview()
+                    movingTile!.frame.origin.y += myBoard.frame.origin.y - myBoard.contentOffset.y
+                    movingTile!.frame.origin.x -= myBoard.contentOffset.x - myBoard.frame.origin.x
+                    view.addSubview(movingTile!)
+                   // movingTile!.myWhereInPlay = .atBat
+                }
             }
         case .ended:
             if movingTile != nil {
                 var ct = 0
                 outer: for slotView in myBoard.slots {
-                    if slotView.frame.contains(gesture.location(in: myBoard)) && !slotView.isOccupied {
+                    var largerFrame = CGRect()
+                    if !Set.isZoomed {
+                    largerFrame = CGRect(x: slotView.frame.origin.x - 1, y: slotView.frame.origin.y - 1, width: slotView.frame.width + 1, height: slotView.frame.height + 1)
+                    } else {
+                    largerFrame = CGRect(x: slotView.frame.origin.x - 2.5, y: slotView.frame.origin.y - 2.5, width: slotView.frame.width + 2.5, height: slotView.frame.height + 2.5)
+                    }
+                    if largerFrame.contains(gesture.location(in: myBoard)) && !slotView.isOccupied && myBoard.frame.contains(gesture.location(in: view)) {
                         slotView.isOccupied = true
                         movingTile?.slotsIndex = ct
-                       // movingTile?.mySize = .small
+                        // movingTile?.mySize = .small
                         movingTile?.myWhereInPlay = .board
                         movingTile?.row = slotView.row
                         movingTile?.column = slotView.column
                         
-                      //  zoomInToBoard(point: slotView.center)
+                        //  zoomInToBoard(point: slotView.center)
                         myBoard.zoomIn()
                         Set.isZoomed = true
                         for tile in allTiles {
-                        dropTileWhereItBelongs(tile: tile)
+                            dropTileWhereItBelongs(tile: tile)
                         }
                         refreshSizes()
                         movingTile = nil
@@ -422,15 +445,15 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
     }
     
-//    func zoomInToBoard(point: CGPoint) {
-//        myBoard.zoomScale = 2.0
-//    }
-//    
-//    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-//        return myBoard.v
-//    }
+    //    func zoomInToBoard(point: CGPoint) {
+    //        myBoard.zoomScale = 2.0
+    //    }
+    //
+    //    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    //        return myBoard.v
+    //    }
     
- 
+    
     
     func dropTileWhereItBelongs(tile: Tile) {
         switch tile.myWhereInPlay {
