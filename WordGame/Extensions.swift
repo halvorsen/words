@@ -26,9 +26,10 @@ extension UIViewController {
 struct CustomColor {
     let white245 = UIColor(colorLiteralRed: 245/255, green: 245/255, blue: 245/255, alpha: 1.0)
     let white234 = UIColor(colorLiteralRed: 227/255, green: 227/255, blue: 227/255, alpha: 1.0)
+    let black80 = UIColor(colorLiteralRed: 80/255, green: 80/255, blue: 80/255, alpha: 1.0)
 }
 
-public struct Set {
+public struct Set1 {
     
     public static var isZoomed: Bool = false
 

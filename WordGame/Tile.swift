@@ -11,6 +11,7 @@ import UIKit
 //let sh = UIScreen.main.bounds.height
 
 class Tile: UIView {
+    let myColor = CustomColor()
 
     enum size {
         case small
@@ -28,7 +29,15 @@ class Tile: UIView {
         case onDeck
     }
     
-    var isLockedInPlace = false
+    var isLockedInPlace = Bool() {didSet{
+        if isLockedInPlace && !isStarterBlock {
+            topOfBlock.backgroundColor = myColor.black80
+            text.textColor = .white
+        }
+        }
+        
+        }
+    var isStarterBlock = false
     var onDeckTileOrder: Int?
     var atBatTileOrder: Int?
     var slotsIndex: Int?
@@ -45,7 +54,7 @@ class Tile: UIView {
                 self.mySize = .medium
             case .board:
                 self.mySize = .small
-                if Set.isZoomed {
+                if Set1.isZoomed {
                     self.mySize = .large
                 }
             }
@@ -89,6 +98,10 @@ class Tile: UIView {
         shadowOfBlock.backgroundColor = .black
         shadowOfBlock.layer.cornerRadius = self.bounds.width/10
         shadowOfBlock.layer.masksToBounds = true
+        if isLockedInPlace && !isStarterBlock {
+            topOfBlock.backgroundColor = myColor.black80
+            text.textColor = .white
+        }
     }
  
     init() {
@@ -107,6 +120,14 @@ class Tile: UIView {
         
         
     }
+    
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        let touch = touches.first as! UITouch
+//                superview!.isUserInteractionEnabled = false
+//    }
+//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        superview!.isUserInteractionEnabled = true
+//    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

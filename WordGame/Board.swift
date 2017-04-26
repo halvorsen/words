@@ -45,15 +45,15 @@ class Board: UIScrollView {
                 v.addSubview(slot2)
             }
         }
-        self.isUserInteractionEnabled = true
-       // self.maximumZoomScale = 3.0
+        self.isUserInteractionEnabled = false
+     
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     let scale: CGFloat = 2.13
-    func zoomIn() {
+    func zoomIn(callback: () -> Void) {
         
         v.frame.size = CGSize( width: scale*345*sw/375, height: scale*345*sw/375 )
         
@@ -70,6 +70,7 @@ class Board: UIScrollView {
             }
         }
         self.contentSize = CGSize(width: self.bounds.width*scale, height: self.bounds.height*scale)
+        callback()
     }
     
     func zoomOut() {
@@ -80,14 +81,22 @@ class Board: UIScrollView {
         for i in 0...14 {
             for j in 0...14 {
                 
-                slots[count].frame = CGRect(x: scale*1*sw/375 + scale*CGFloat(i)*23*sw/375, y: scale*1*sw/375 + scale*CGFloat(j)*23*sw/375, width: scale*22*sw/375, height: scale*22*sw/375)
+                slots[count].frame = CGRect(x: 1*sw/375 + CGFloat(i)*23*sw/375, y: 1*sw/375 + CGFloat(j)*23*sw/375, width: 22*sw/375, height: 22*sw/375)
                 slots[count].layer.cornerRadius = scale*slots[count].frame.width*3/22
                 
-                slots2[count].frame.size = CGSize(width: scale*22*sw/375, height: scale*21.5*sw/375)
+                slots2[count].frame = CGRect(x: 1*sw/375 + CGFloat(i)*23*sw/375, y: 1.5*sw/375 + CGFloat(j)*23*sw/375, width: 22*sw/375, height: 21.5*sw/375)
                 slots2[count].layer.cornerRadius = scale*slots2[count].frame.width*3/22
                 count += 1
             }
         }
+        self.contentSize = self.bounds.size
+        
     }
+
+    
+    
+    
+    
+
 
 }
