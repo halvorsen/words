@@ -70,10 +70,11 @@ class Board: UIScrollView {
             }
         }
         self.contentSize = CGSize(width: self.bounds.width*scale, height: self.bounds.height*scale)
+        Set1.isZoomed = true
         callback()
     }
     
-    func zoomOut() {
+    func zoomOut(callback: () -> Void) {
         let scale: CGFloat = 1
         v.frame.size = CGSize( width: scale*345*sw/375, height: scale*345*sw/375 )
         
@@ -90,7 +91,10 @@ class Board: UIScrollView {
             }
         }
         self.contentSize = self.bounds.size
-        
+        Set1.isZoomed = false
+        self.contentOffset.x = 0
+        self.contentOffset.y = 0
+        callback()
     }
 
     

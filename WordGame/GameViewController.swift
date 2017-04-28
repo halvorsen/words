@@ -17,12 +17,33 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var allTiles = [Tile]()
     var movingTile: Tile?
     var onDeckTiles = [Tile]()
-    var tilesBeingPlayed = [Tile]()
+    // var tilesBeingPlayed = [Tile]()
     let pile = Tile()
     var pileOfTiles = 15 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = "x" + pileOfTilesString } }
     var pileOfTilesString = "x15"
     var isNotSameTile = false
     var playButton = UIButton()
+    var refillMode = false {didSet{
+        if refillMode {
+            view.removeGestureRecognizer(pan)
+            for tile in allTiles {
+                if tile.myWhereInPlay == .onDeck || tile.myWhereInPlay == .pile {
+                    tile.topOfBlock.backgroundColor = self.myColor.black80
+                    tile.text.textColor = .white
+                }
+            }
+            
+            
+        } else {
+            view.addGestureRecognizer(pan)
+            for tile in allTiles {
+                if tile.myWhereInPlay == .onDeck || tile.myWhereInPlay == .pile {
+                    tile.topOfBlock.backgroundColor = .white
+                    tile.text.textColor = .black
+                }
+            }
+        }}}
+    
     
     override func viewWillAppear(_ animated: Bool) {
         doubleTap.numberOfTapsRequired = 2
@@ -38,8 +59,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         view.addGestureRecognizer(tap)
         pile.text.font = UIFont(name: "HelveticaNeue-Bold", size: 14*fontSizeMultiplier)
         pile.frame = CGRect(x: 15*sw/375, y: 616*sh/667, width: 34*sw/375, height: 34*sw/375)
+        pile.myWhereInPlay = .pile
         view.addSubview(pile)
         pile.text.text = pileOfTilesString
+        allTiles.append(pile)
         addTilesToBoard()
         startGameWithTilesOnBoard(difficulty: .medium)
         playButton.frame = CGRect(x: 87.5*sw/375, y: 615*sh/667, width: 200*sw/375, height: 40*sw/375)
@@ -51,7 +74,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         playButton.layer.masksToBounds = true
         playButton.layer.borderColor = UIColor.black.cgColor
         playButton.setTitleColor(.black, for: .normal)
-        view.addSubview(playButton)
+        
         myBoard.delegate = self
         self.myBoard.showsHorizontalScrollIndicator = false
         self.myBoard.showsVerticalScrollIndicator = false
@@ -62,8 +85,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         doubleTap.numberOfTapsRequired = 2
     }
     
-    
-    private func findTheString() -> String? {
+    var wordTiles = [Tile]()
+    private func findTheString(callback: (_ word: String?, _ rowWord: Bool, _ tilesInPlay: [Tile]) -> Void) {
         var tilesInPlay = [Tile]()
         for tile in allTiles {
             if tile.myWhereInPlay == .board && tile.isLockedInPlace == false {
@@ -94,58 +117,94 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 isSameColumn = false
             }
         }
+        for _ in 0...6 {
+            for tile in allTiles {
+                if tile.isStarterBlock || tile.isLockedInPlace {
+                    print("blah")
+                    if isSameRow {
+                        print("blah1")
+                        if tile.row == smallestRow && tile.column == smallestColumn - 1 {
+                            print("blah3")
+                            smallestColumn -= 1
+                            tilesInPlay.append(tile)
+                        }
+                    } else if isSameColumn {
+                        print("blah2")
+                        if tile.row == smallestRow - 1 && tile.column == smallestColumn {
+                            print("blah4")
+                            smallestRow -= 1
+                            tilesInPlay.append(tile)
+                        }
+                    }
+                    
+                    
+                    
+                }
+            }
+        }
+        
+        if wordTiles.count == 1 {
+            
+            for tile in allTiles {
+                if tile.isLockedInPlace == true && tile.row == wordTiles[0].row! - 1 {
+                    isSameRow = false
+                    isSameColumn = true
+                }
+                if tile.isLockedInPlace == true && tile.column == wordTiles[0].column! - 1 {
+                    isSameRow = true
+                    isSameColumn = false
+                }
+            }
+        }
+        
         if !isSameColumn && !isSameRow {
-            return nil
+            callback(nil, true, tilesInPlay)
         }
         if isSameRow {
-            print("same row")
+            
             (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameRow(row: smallestRow, column: smallestColumn)
-            print("bools: \(bool1) \(bool2) \(bool3)")
+            
             if bool1 == true {
                 smallestColumn -= 1
                 if bool2 == true {
                     smallestColumn -= 1
                     if bool3 == true {
                         smallestColumn -= 1
-                    }
-                }
+                    }                }
             }
             var dontQuit = true
             while dontQuit {
                 var count = 1
-                
-                print("alltilescount: \(allTiles.count)")
                 outerLoop:  for tile in allTiles {
-                    print("tilerow: \(tile.row)")
-                    print("tilecol: \(tile.column)")
-                    print("smallestcolumn: \(smallestColumn)")
-                    print("smallestrow: \(smallestRow)")
-                    if tile.row != nil {
-                        print("same row2")
+                    
+                    if tile.row != nil && tile.myWhereInPlay == .board {
+                        
                         
                         if tile.row! == smallestRow && tile.column! == smallestColumn {
-                            print("same row3")
+                            
                             
                             word += tile.mySymbol.rawValue
                             print(word)
+                            print("wordtile")
+                            wordTiles.append(tile)
                             smallestColumn += 1
                             break outerLoop
                         } else if allTiles.count == count {
-                            print("same row4")
+                            
                             
                             dontQuit = false
-                            return word
+                            callback(word, true, tilesInPlay)
                         }
                         
                     } else if allTiles.count == count {
                         dontQuit = false
-                        return word
+                        callback(word, true, tilesInPlay)
                     }
                     count += 1
                 }
             }
         } else if isSameColumn {
-            print("same column")
+            
             (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameColumn(row: smallestRow, column: smallestColumn)
             if bool1 == true {
                 smallestColumn -= 1
@@ -158,29 +217,31 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             }
             var dontQuit = true
             while dontQuit {
-                print("in while loop 1")
+                
                 var count = 1
                 outerLoop: for tile in allTiles {
-                    if tile.row != nil {
+                    if tile.row != nil && tile.myWhereInPlay == .board {
                         if tile.row! == smallestRow && tile.column! == smallestColumn {
                             word += tile.mySymbol.rawValue
+                            print("wordtile")
+                            wordTiles.append(tile)
                             print(word)
                             smallestRow += 1
                             break outerLoop
                         } else if allTiles.count == count {
                             dontQuit = false
-                            return word
+                            callback(word, false, tilesInPlay)
                         }
                         
                     } else if allTiles.count == count {
                         dontQuit = false
-                        return word
+                        callback(word, false, tilesInPlay)
                     }
                     count += 1
                 }
             }
         }
-        return word
+        
     }
     
     private func checkIfThereIsPriorTileInSameRow(row: Int, column: Int) -> (Bool,Bool,Bool) {
@@ -189,10 +250,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         var three = false
         for tile in allTiles {
             if tile.column != nil {
-                print("Tile Column: \(tile.column)")
-                print("column: \(column)")
-                print("tile.row: \(tile.row!)")
-                print("row: \(row)")
+                
                 if tile.column! + 1 == column && tile.row! == row {
                     one = true
                 }
@@ -226,34 +284,260 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         return (one,two,three)
     }
-    
+    var isFirstPlayFunc = true
     @objc private func playFunc(_ button: UIButton) {
-        var isWord = false
-        var w = String()
-        if let word = findTheString() {
-            w = word
-            print(word)
-            
-            if isReal(word: w.lowercased()) {
-                for tile in tilesBeingPlayed {
-                    tile.isLockedInPlace = true
+        
+        guard isFirstPlayFunc == true else {return}
+        isFirstPlayFunc = false
+        
+        findTheString() { (word,isRowWord,tilesInPlay) -> Void in
+            if let w = word {
+                print(w)
+                let everythingChecksOutPerpendicular = perpendicularWords(isRowWord: isRowWord, tilesInPlay: tilesInPlay)
+                myBoard.zoomOut() { () -> Void in
+                    for tile in allTiles {
+                        dropTileWhereItBelongs(tile: tile)
+                    }
+                    
+                    refreshSizes()
                 }
-                tilesBeingPlayed.removeAll()
+                
+                guard isReal(word: w.lowercased()) != nil else {return}
+                if isReal(word: w.lowercased())! && everythingChecksOutPerpendicular {
+                    
+                    for i in 0..<wordTiles.count {
+                        wordTiles[i].isBuildable = true
+                        delay(bySeconds: 0.2*Double(i)+0.4) {
+                            if self.playButton.isDescendant(of: self.view) {
+                                self.playButton.removeFromSuperview()
+                            }
+                            self.wordTiles[i].isLockedInPlace = true
+                            if self.wordTiles[i].isStarterBlock {
+                                self.wordTiles[i].isStarterBlock = false
+                                self.wordTiles[i].topOfBlock.backgroundColor = self.myColor.black80
+                                self.wordTiles[i].text.textColor = .white
+                            }
+                            if i == self.wordTiles.count - 1 {
+                                self.wordTiles.removeAll()
+                                //  self.tilesBeingPlayed.removeAll()
+                                self.isFirstPlayFunc = true
+                                self.startBonuses()
+                                self.lockTilesAndRefillRack()
+                            }
+                            
+                        }
+                        
+                    }
+                    delay(bySeconds: 3) {
+                        
+                    }
+                    
+                } else {
+                    wordTiles.removeAll()
+                   wordAlert(word: w)
+                }
+                
             } else {
-                let alert = UIAlertController(title: "Retry", message: "Not a word", preferredStyle: UIAlertControllerStyle.alert)
+                wordTiles.removeAll()
+                let alert = UIAlertController(title: "Retry", message: "Can only spell one word at a time", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
             }
-
-        } else {
-            let alert = UIAlertController(title: "Retry", message: "Can only spell one word at a time", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            
         }
+    }
+    
+    private func wordAlert(word: String) {
+        let alert = UIAlertController(title: word.uppercased(), message: "Not a word", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func perpendicularWords(isRowWord: Bool, tilesInPlay: [Tile]) -> Bool {
+        var everythingChecksOut = true
+        var indexesOfWords = [Int]()
+        var smallestRow = 16
+        var smallestColumn = 16
+        var word = String()
+        
+        switch isRowWord {
+            
+        case true:
+            for tile in tilesInPlay {
+                if tile.slotsIndex! - 1 > -1 {
+                    if myBoard.slots[tile.slotsIndex! - 1].isOccupied {
+                        indexesOfWords.append(tile.slotsIndex!)
+                    }
+                }
+                if tile.slotsIndex! + 1 < 225 {
+                    if myBoard.slots[tile.slotsIndex! + 1].isOccupied{
+                        indexesOfWords.append(tile.slotsIndex!)
+                    }
+                }
+                
+            }
+            for index in indexesOfWords {
+                
+                smallestRow = myBoard.slots[index].row
+                smallestColumn = myBoard.slots[index].column
+                loop: for tile in allTiles {
+                    var isKeepGoing = true
+                    while isKeepGoing {
+                        isKeepGoing = false
+                        if tile.myWhereInPlay == .board && myBoard.slots[index].column == tile.column! && tile.row! + 1 == smallestRow {
+                            
+                            smallestRow = tile.row!
+                            isKeepGoing = true
+                            break loop
+                        }
+                    }
+                    
+                }
+                
+                var dontQuit = true
+                while dontQuit {
+                    var count = 1
+                    outerLoop:  for tile in allTiles {
+                        
+                        if tile.column != nil && tile.myWhereInPlay == .board {
+                            
+                            
+                            if tile.row! == smallestColumn && tile.row! == smallestRow {
+                                
+                                
+                                word += tile.mySymbol.rawValue
+                                
+                                smallestRow += 1
+                                break outerLoop
+                            } else if allTiles.count == count {
+                                
+                                
+                                dontQuit = false
+                                if !isReal(word: word.lowercased()){
+                                    everythingChecksOut = false
+                                    wordAlert(word: word)
+                                }
+                            }
+                            
+                        } else if allTiles.count == count {
+                            dontQuit = false
+                            if !isReal(word: word.lowercased()) {
+                                everythingChecksOut = false
+                                wordAlert(word: word)
+                            }
+                            
+                        }
+                        count += 1
+                    }
+                }
+                
+                
+            }
+            
+        case false:
+            for tile in tilesInPlay {
+                if tile.slotsIndex! - 15 > -1 {
+                    if myBoard.slots[tile.slotsIndex! - 15].isOccupied {
+                        indexesOfWords.append(tile.slotsIndex!)
+                    }
+                }
+                if tile.slotsIndex! + 15 < 225 {
+                    if myBoard.slots[tile.slotsIndex! + 15].isOccupied {
+                        indexesOfWords.append(tile.slotsIndex!)
+                    }
+                }
+            }
+            for index in indexesOfWords {
+                
+                smallestRow = myBoard.slots[index].row
+                smallestColumn = myBoard.slots[index].column
+                loop: for tile in allTiles {
+                    var isKeepGoing = true
+                    while isKeepGoing {
+                        isKeepGoing = false
+                        if tile.myWhereInPlay == .board && myBoard.slots[index].row == tile.row! && tile.column! + 1 == smallestColumn {
+                            
+                            smallestColumn = tile.column!
+                            isKeepGoing = true
+                            break loop
+                        }
+                    }
+                    
+                }
+                
+                var dontQuit = true
+                while dontQuit {
+                    var count = 1
+                    outerLoop:  for tile in allTiles {
+                        
+                        if tile.row != nil && tile.myWhereInPlay == .board {
+                            
+                            
+                            if tile.row! == smallestRow && tile.column! == smallestColumn {
+                                
+                                
+                                word += tile.mySymbol.rawValue
+                               
+                                smallestColumn += 1
+                                break outerLoop
+                            } else if allTiles.count == count {
+                                
+                                
+                                dontQuit = false
+                              if !isReal(word: word.lowercased()) {
+                                everythingChecksOut = false
+                                wordAlert(word: word)
+                                }
+                            }
+                            
+                        } else if allTiles.count == count {
+                            dontQuit = false
+                            if !isReal(word: word.lowercased()) {
+                                everythingChecksOut = false
+                                wordAlert(word: word)
+                            }
+
+                        }
+                        count += 1
+                    }
+                }
+                
+                
+            }
+        }
+        
+        
+        
+        
+        return everythingChecksOut
+    }
+    
+    private func startBonuses() {
         
     }
     
-    func isReal(word: String) -> Bool {
+    private func lockTilesAndRefillRack() {
+        
+        refillMode = true
+    }
+    
+    
+    func isReal(word: String) -> Bool? {
+        var isWordBuildable = false
+        print(isWordBuildable)
+        print(wordTiles)
+        for tile in wordTiles {
+            print(isWordBuildable)
+            if tile.isBuildable { isWordBuildable = true }
+            print(isWordBuildable)
+        }
+        guard isWordBuildable == true else {
+            var isFirstPlayFunc = true
+            let alert = UIAlertController(title: word.uppercased(), message: "Must build off black tiles", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return nil
+        }
         let checker = UITextChecker()
         let range = NSMakeRange(0, word.characters.count)
         let wordRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
@@ -294,13 +578,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     func whileFunction(rowLow: Int, rowHigh: Int, randomStartSlotIndex: Int, randomEndSlotIndex: Int, callback: (Int) -> Void) {
         var oneIndex = 500
         var oneIndexRow = -1
-        print("rowLow: \(rowLow)")
-        print("rowHigh: \(rowHigh)")
+        
         while oneIndexRow < rowLow || oneIndexRow > rowHigh || oneIndex == randomStartSlotIndex || oneIndex == randomEndSlotIndex || oneIndex == randomStartSlotIndex + 1 || oneIndex == randomStartSlotIndex - 1 || oneIndex == randomStartSlotIndex + 15 || oneIndex == randomEndSlotIndex - 1 || oneIndex == randomEndSlotIndex + 1 || oneIndex == randomEndSlotIndex - 15 {
-            print("inwhileloop")
+            
             oneIndex = Int(arc4random_uniform(224))
-            print("TRY")
-            print(oneIndex)
+            
             oneIndexRow = myBoard.slots[oneIndex].row
         }
         
@@ -319,6 +601,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             tile.myWhereInPlay = .board
             if i == 1 {
                 tile.isStarterBlock = true
+            } else {
+                tile.isBuildable = true
             }
             if i == 0 {
                 let slot = myBoard.slots[randomStartSlotIndex]
@@ -360,7 +644,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 rowHigh = rowStart; rowLow = rowEnd
             }
             whileFunction(rowLow: rowLow, rowHigh: rowHigh, randomStartSlotIndex: randomStartSlotIndex, randomEndSlotIndex: randomEndSlotIndex) { (oneIndex) -> Void in
-                print(oneIndex)
+                
                 let tile = Tile()
                 tile.isStarterBlock = true
                 tile.mySymbol = pickRandomLetter()
@@ -384,19 +668,110 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         
     }
-    
+    var tapTileOnlyOnce = true
     @objc private func tapTile(_ gesture: UITapGestureRecognizer) {
         
+        switch refillMode {
+        case false:
+            for tile in allTiles {
+                if !myBoard.frame.contains(gesture.location(in: view)){
+                    if tile.frame.contains(gesture.location(in: view)) && !tile.isLockedInPlace && tile.myWhereInPlay == .atBat {
+                        movingTile = tile
+                    }
+                } else {
+                    if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board {
+                        
+                        movingTile = tile
+                    }
+                }
+            }
+        case true:
+            
+            for tile in allTiles {
+                if !myBoard.frame.contains(gesture.location(in: view)){
+                    
+                    if tile.frame.contains(gesture.location(in: view)) && tile == pile {
+                        
+                        pileOfTiles -= 1
+                        let newTile = Tile()
+                        newTile.mySymbol = pickRandomLetter()
+                        allTiles.append(newTile)
+                        newTile.myWhereInPlay = .atBat
+                        newTile.mySize = .large
+                        var container = [Int]()
+                        for tile2 in allTiles {
+                            if let order = tile2.atBatTileOrder {
+                                if tile2.myWhereInPlay == .atBat {
+                                    container.append(order)
+                                    print(container)
+                                }
+                            }
+                            
+                        }
+                        if container.count == 6 {refillMode = false}
+                        o: for i in 0...6 {
+                            
+                            if !container.contains(i) {
+                                
+                                newTile.atBatTileOrder = i
+                                break o
+                            }
+                        }
+                        view.addSubview(newTile)
+                        dropTileWhereItBelongs(tile: newTile)
+                        
+                    } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck {
+                        var container = [Int]()
+                        var seatWarmer = Int()
+                        
+                        for tile2 in allTiles {
+                            if let order = tile2.atBatTileOrder {
+                                if tile2.myWhereInPlay == .atBat {
+                                    container.append(order)
+                                    print(container)
+                                }
+                            }
+                            
+                        }
+                        if container.count == 6 {refillMode = false}
+                        o: for i in 0...6 {
+                            
+                            if !container.contains(i) {
+                                
+                                seatWarmer = i
+                                break o
+                            }
+                        }
+                        tile.myWhereInPlay = .atBat
+                        tile.mySize = .large
+                        tile.atBatTileOrder = seatWarmer
+                        tile.topOfBlock.backgroundColor = .white
+                        tile.text.textColor = .black
+                        dropTileWhereItBelongs(tile: tile)
+                        onDeckTiles.removeAll()
+                        for tile in allTiles {
+                            if tile.myWhereInPlay == .onDeck {
+                                onDeckTiles.append(tile)
+                            }
+                        }
+                        rearrangeOnDeck(gone: tile.onDeckTileOrder!)
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    private func rearrangeOnDeck(gone: Int) {
         for tile in allTiles {
-            if !myBoard.frame.contains(gesture.location(in: view)){
-            if tile.frame.contains(gesture.location(in: view)) && !tile.isLockedInPlace && tile.myWhereInPlay == .atBat {
-                movingTile = tile
-            }
-            } else {
-            if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board {
-                print("touching in tile in board by tap")
-                movingTile = tile
-            }
+            if tile.myWhereInPlay == .onDeck {
+                print("on deck order")
+                print(tile.onDeckTileOrder)
+                if tile.onDeckTileOrder! > gone {
+                    tile.onDeckTileOrder? -= 1
+                    
+                }
+                dropTileWhereItBelongs(tile: tile)
             }
         }
     }
@@ -404,29 +779,27 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     @objc private func doubleTapFunc(_ gesture: UITapGestureRecognizer) {
         if Set1.isZoomed == false && myBoard.frame.contains(gesture.location(in: view)) {
             myBoard.zoomIn() { () -> Void in
-            Set1.isZoomed = true
-            myBoard.contentOffset.x = gesture.location(in: myBoard).x*(myBoard.scale) - myBoard.frame.width/2
-            
-            if myBoard.contentOffset.x < 0 {
-                myBoard.contentOffset.x = 0
-            }
-            if myBoard.contentOffset.x > myBoard.frame.width*(myBoard.scale - 1) {
-                myBoard.contentOffset.x = myBoard.frame.width*(myBoard.scale - 1)
-            }
-            myBoard.contentOffset.y = gesture.location(in: myBoard).y*(myBoard.scale) - myBoard.frame.height/2
-            if myBoard.contentOffset.y < 0 {
-                myBoard.contentOffset.y = 0
-            }
-            if myBoard.contentOffset.y > myBoard.frame.height*(myBoard.scale - 1) {
-                myBoard.contentOffset.y = myBoard.frame.height*(myBoard.scale - 1)
-            }
+                
+                myBoard.contentOffset.x = gesture.location(in: myBoard).x*(myBoard.scale) - myBoard.frame.width/2
+                
+                if myBoard.contentOffset.x < 0 {
+                    myBoard.contentOffset.x = 0
+                }
+                if myBoard.contentOffset.x > myBoard.frame.width*(myBoard.scale - 1) {
+                    myBoard.contentOffset.x = myBoard.frame.width*(myBoard.scale - 1)
+                }
+                myBoard.contentOffset.y = gesture.location(in: myBoard).y*(myBoard.scale) - myBoard.frame.height/2
+                if myBoard.contentOffset.y < 0 {
+                    myBoard.contentOffset.y = 0
+                }
+                if myBoard.contentOffset.y > myBoard.frame.height*(myBoard.scale - 1) {
+                    myBoard.contentOffset.y = myBoard.frame.height*(myBoard.scale - 1)
+                }
             }
             
         } else if myBoard.frame.contains(gesture.location(in: view)) {
-            myBoard.zoomOut()
-            Set1.isZoomed = false
-            myBoard.contentOffset.x = 0
-            myBoard.contentOffset.y = 0
+            myBoard.zoomOut(){() -> Void in}
+            
         }
         for tile in allTiles {
             dropTileWhereItBelongs(tile: tile)
@@ -434,12 +807,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         refreshSizes()
     }
     
-    var iWantToScrollMyBoard = true {didSet{ print("Iwantto scroll: \(iWantToScrollMyBoard)")}}
+    var iWantToScrollMyBoard = true
     @objc private func moveTile(_ gesture: UIPanGestureRecognizer) {
         
         switch gesture.state {
         case .began:
-            print("BEGAN")
             
             for tile in allTiles {
                 if !myBoard.frame.contains(gesture.location(in: view)) {
@@ -447,6 +819,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     if tile.frame.contains(gesture.location(in: view)) && !tile.isLockedInPlace && tile.myWhereInPlay == .atBat {
                         
                         movingTile = tile
+                        movingTile?.layer.zPosition = 10
                         movingTile?.mySize = .large
                         //isNotSameTile = true
                         if movingTile?.slotsIndex != nil {
@@ -455,7 +828,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     }
                 } else {
                     if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board {
-                        print("touching in tile in board")
+                        
                         iWantToScrollMyBoard = false
                         movingTile = tile
                         movingTile?.mySize = .large
@@ -469,17 +842,17 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             
         case .changed:
             if iWantToScrollMyBoard && Set1.isZoomed {
-                print("Iam trying to scroll")
-                let translation = gesture.translation(in: view)
-               
-                    if myBoard.contentOffset.x - translation.x > 0 && myBoard.contentOffset.x - translation.x < myBoard.frame.width*(myBoard.scale - 1) {
-                    myBoard.contentOffset.x -= translation.x
-                    }
                 
-               
-                    if myBoard.contentOffset.y - translation.y > 0 && myBoard.contentOffset.y - translation.y < myBoard.frame.width*(myBoard.scale - 1) {
+                let translation = gesture.translation(in: view)
+                
+                if myBoard.contentOffset.x - translation.x > 0 && myBoard.contentOffset.x - translation.x < myBoard.frame.width*(myBoard.scale - 1) {
+                    myBoard.contentOffset.x -= translation.x
+                }
+                
+                
+                if myBoard.contentOffset.y - translation.y > 0 && myBoard.contentOffset.y - translation.y < myBoard.frame.width*(myBoard.scale - 1) {
                     myBoard.contentOffset.y -= translation.y
-                    }
+                }
                 
                 gesture.setTranslation(CGPoint(x:0,y:0), in: self.view)
                 if myBoard.contentOffset.x < 0 {
@@ -492,26 +865,66 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             
             
             if movingTile != nil {
-                print("i am trying to move a tile")
+                
                 let translation = gesture.translation(in: view)
                 movingTile?.center = CGPoint(x: (movingTile?.center.x)! + translation.x, y: (movingTile?.center.y)! + translation.y)
                 
                 gesture.setTranslation(CGPoint(x:0,y:0), in: self.view)
-                //  print(myBoard.frame)
+                
+                //  moving in and out of board frame
                 if myBoard.frame.contains(CGPoint(x: movingTile!.frame.origin.x + movingTile!.frame.width/2, y: movingTile!.frame.maxY)) && !movingTile!.isDescendant(of: myBoard) {
+                    print("Entered")
                     movingTile!.removeFromSuperview()
                     movingTile!.frame.origin.y -= myBoard.frame.origin.y - myBoard.contentOffset.y
                     movingTile!.frame.origin.x += myBoard.contentOffset.x - myBoard.frame.origin.x
                     myBoard.addSubview(movingTile!)
-                    // movingTile!.myWhereInPlay = .board
+                    
                 } else if !myBoard.bounds.contains(CGPoint(x: movingTile!.frame.origin.x + movingTile!.frame.width/2, y: movingTile!.frame.maxY)) && movingTile!.isDescendant(of: myBoard) {
-                    print("TRiggered")
+                    print("Exited")
                     movingTile!.removeFromSuperview()
                     movingTile!.frame.origin.y += myBoard.frame.origin.y - myBoard.contentOffset.y
                     movingTile!.frame.origin.x -= myBoard.contentOffset.x - myBoard.frame.origin.x
                     view.addSubview(movingTile!)
-                    // movingTile!.myWhereInPlay = .atBat
+                    movingTile?.myWhereInPlay = .atBat
+                    var container = [Int]()
+                    for tile in allTiles {
+                        if let order = tile.atBatTileOrder {
+                            container.append(order)
+                        }
+                        
+                    }
+                    o: for i in 0...6 {
+                        if !container.contains(i) {
+                            movingTile?.atBatTileOrder = i
+                            break o
+                        }
+                    }
                 }
+                
+                // enable swapping of atBat tiles
+                if !movingTile!.isDescendant(of: myBoard) {
+                    for tile in allTiles {
+                        if tile.myWhereInPlay == .atBat && tile != movingTile {
+                            if tile.center.x > (movingTile?.center.x)! && (movingTile?.atBatTileOrder!)! > tile.atBatTileOrder! {
+                                
+                                movingTile!.atBatTileOrder = tile.atBatTileOrder
+                                tile.atBatTileOrder! += 1
+                            } else if tile.center.x < (movingTile?.center.x)! && (movingTile?.atBatTileOrder!)! < tile.atBatTileOrder! {
+                                
+                                movingTile!.atBatTileOrder = tile.atBatTileOrder
+                                tile.atBatTileOrder! -= 1
+                            }
+                            let order = tile.atBatTileOrder!
+                            let x = 13*self.sw/375 + CGFloat(order)*50*self.sw/375
+                            let y = 13*self.sh/667 + myBoard.frame.maxY
+                            UIView.animate(withDuration: 0.3) {
+                                tile.frame.origin = CGPoint(x: x, y: y)
+                            }
+                        }
+                    }
+                }
+                
+                
             }
         case .ended:
             iWantToScrollMyBoard = true
@@ -525,45 +938,52 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         largerFrame = CGRect(x: slotView.frame.origin.x - 2.5, y: slotView.frame.origin.y - 2.5, width: slotView.frame.width + 2.5, height: slotView.frame.height + 2.5)
                     }
                     if largerFrame.contains(gesture.location(in: myBoard)) && !slotView.isOccupied && myBoard.frame.contains(gesture.location(in: view)) {
+                        guard slotView.isOccupied == false else {movingTile?.removeFromSuperview(); view.addSubview(movingTile!); dropTileWhereItBelongs(tile: movingTile!); tapTileOnlyOnce = true; return}
                         slotView.isOccupied = true
                         movingTile?.slotsIndex = ct
                         // movingTile?.mySize = .small
                         movingTile?.myWhereInPlay = .board
                         movingTile?.row = slotView.row
                         movingTile?.column = slotView.column
-                        tilesBeingPlayed.append(movingTile!)
+                        //   tilesBeingPlayed.append(movingTile!)
                         //  zoomInToBoard(point: slotView.center)
                         if Set1.isZoomed == false {
                             myBoard.zoomIn() { () -> Void in
-                            myBoard.contentOffset.x = slotView.frame.origin.x - myBoard.bounds.width/2 + slotView.frame.width/2
-                            if myBoard.contentOffset.x < 0 {
-                                myBoard.contentOffset.x = 0
-                            }
-                            myBoard.contentOffset.y = slotView.frame.origin.y - myBoard.bounds.height/2 + slotView.frame.width/2
-                            if myBoard.contentOffset.y < 0 {
-                                myBoard.contentOffset.y = 0
-                            }
+                                if !playButton.isDescendant(of: view) {
+                                    view.addSubview(playButton)
+                                }
+                                myBoard.contentOffset.x = slotView.frame.origin.x - myBoard.bounds.width/2 + slotView.frame.width/2
+                                if myBoard.contentOffset.x < 0 {
+                                    myBoard.contentOffset.x = 0
+                                }
+                                myBoard.contentOffset.y = slotView.frame.origin.y - myBoard.bounds.height/2 + slotView.frame.width/2
+                                if myBoard.contentOffset.y < 0 {
+                                    myBoard.contentOffset.y = 0
+                                }
                                 if myBoard.contentOffset.x > myBoard.frame.width*(myBoard.scale - 1) {
                                     myBoard.contentOffset.x = myBoard.frame.width*(myBoard.scale - 1)
                                 }
                                 if myBoard.contentOffset.y > myBoard.frame.height*(myBoard.scale - 1) {
                                     myBoard.contentOffset.y = myBoard.frame.height*(myBoard.scale - 1)
                                 }
-                            Set1.isZoomed = true
+                                
                             }
                         }
                         for tile in allTiles {
                             dropTileWhereItBelongs(tile: tile)
                         }
                         refreshSizes()
+                        movingTile?.layer.zPosition = 0
                         movingTile = nil
                         break outer
                     }
                     ct += 1
                     if ct == 225 {
                         //make it belong back in atBat
-                        dropTileWhereItBelongs(tile: movingTile!)}
+                        movingTile?.removeFromSuperview(); view.addSubview(movingTile!); dropTileWhereItBelongs(tile: movingTile!)}
                 }
+                movingTile?.layer.zPosition = 0
+                movingTile = nil
             }
         default:
             break
@@ -592,9 +1012,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             let order = tile.atBatTileOrder!
             let x = 13*self.sw/375 + CGFloat(order)*50*self.sw/375
             let y = 13*self.sh/667 + myBoard.frame.maxY
-            UIView.animate(withDuration: 1.0) {
+            UIView.animate(withDuration: 0.3) {
                 tile.frame.origin = CGPoint(x: x, y: y)
             }
+        case .pile: break
         case .onDeck:
             let amount = onDeckTiles.count
             let order = tile.onDeckTileOrder!
@@ -627,7 +1048,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 default:
                     break
                 }
-            case 3:
+            case 4:
                 y = 616
                 switch order {
                 case 0:
@@ -641,7 +1062,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 default:
                     break
                 }
-            case 4:
+            case 5:
                 y = 616
                 switch order {
                 case 0:
@@ -657,7 +1078,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 default:
                     break
                 }
-            case 5...14:
+            case 6...14:
                 y = 616
                 switch order {
                 case 0:
@@ -875,6 +1296,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             switch tile.myWhereInPlay {
             case .atBat:
                 tile.mySize = .large
+            case .pile: break
             case .onDeck:
                 tile.mySize = .medium
             case .board:
@@ -894,13 +1316,23 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
     }
     
-
-//        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//            
-//                    myBoard.isUserInteractionEnabled = false
-//        }
-//        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//            myBoard.isUserInteractionEnabled = true
-//        }
+    public func delay(bySeconds seconds: Double, dispatchLevel: DispatchLevel = .main, closure: @escaping () -> Void) {
+        let dispatchTime = DispatchTime.now() + seconds
+        dispatchLevel.dispatchQueue.asyncAfter(deadline: dispatchTime, execute: closure)
+    }
+    
+    public enum DispatchLevel {
+        case main, userInteractive, userInitiated, utility, background
+        var dispatchQueue: DispatchQueue {
+            switch self {
+            case .main:                 return DispatchQueue.main
+            case .userInteractive:      return DispatchQueue.global(qos: .userInteractive)
+            case .userInitiated:        return DispatchQueue.global(qos: .userInitiated)
+            case .utility:              return DispatchQueue.global(qos: .utility)
+            case .background:           return DispatchQueue.global(qos: .background)
+            }
+        }
+    }
+    
 }
 

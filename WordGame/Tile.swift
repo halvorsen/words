@@ -27,6 +27,7 @@ class Tile: UIView {
         case board
         case atBat
         case onDeck
+        case pile
     }
     
     var isLockedInPlace = Bool() {didSet{
@@ -37,6 +38,7 @@ class Tile: UIView {
         }
         
         }
+    var isBuildable = false
     var isStarterBlock = false
     var onDeckTileOrder: Int?
     var atBatTileOrder: Int?
@@ -44,7 +46,7 @@ class Tile: UIView {
     var row: Int?
     var column: Int?
     var mySymbol: symbol = .a
-    var mySize: size = .medium { didSet { print(mySize); changeBlockSize() } }
+    var mySize: size = .medium { didSet { changeBlockSize() } }
     var myWhereInPlay: whereInPlay = .atBat {
         didSet {
             switch myWhereInPlay {
@@ -57,7 +59,9 @@ class Tile: UIView {
                 if Set1.isZoomed {
                     self.mySize = .large
                 }
+                case .pile: break
             }
+            
         }
     }
     var topOfBlock = UILabel()
