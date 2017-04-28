@@ -17,7 +17,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var allTiles = [Tile]()
     var movingTile: Tile?
     var onDeckTiles = [Tile]()
-    // var tilesBeingPlayed = [Tile]()
+    var wordTiles = [Tile]()
+    var wordTilesPerpendicular = [Tile]()
     let pile = Tile()
     var pileOfTiles = 15 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = "x" + pileOfTilesString } }
     var pileOfTilesString = "x15"
@@ -85,7 +86,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         doubleTap.numberOfTapsRequired = 2
     }
     
-    var wordTiles = [Tile]()
+    
     private func findTheString(callback: (_ word: String?, _ rowWord: Bool, _ tilesInPlay: [Tile]) -> Void) {
         var tilesInPlay = [Tile]()
         for tile in allTiles {
@@ -120,18 +121,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         for _ in 0...6 {
             for tile in allTiles {
                 if tile.isStarterBlock || tile.isLockedInPlace {
-                    print("blah")
+                   
                     if isSameRow {
-                        print("blah1")
+                      
                         if tile.row == smallestRow && tile.column == smallestColumn - 1 {
-                            print("blah3")
+                           
                             smallestColumn -= 1
                             tilesInPlay.append(tile)
                         }
                     } else if isSameColumn {
-                        print("blah2")
+                    
                         if tile.row == smallestRow - 1 && tile.column == smallestColumn {
-                            print("blah4")
+                          
                             smallestRow -= 1
                             tilesInPlay.append(tile)
                         }
@@ -284,6 +285,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         return (one,two,three)
     }
+    
     var isFirstPlayFunc = true
     @objc private func playFunc(_ button: UIButton) {
         
@@ -319,6 +321,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             }
                             if i == self.wordTiles.count - 1 {
                                 self.wordTiles.removeAll()
+                                self.wordTilesPerpendicular.removeAll()
                                 //  self.tilesBeingPlayed.removeAll()
                                 self.isFirstPlayFunc = true
                                 self.startBonuses()
@@ -334,7 +337,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     
                 } else {
                     wordTiles.removeAll()
-                   wordAlert(word: w)
+                    wordAlert(word: w)
                 }
                 
             } else {
@@ -358,7 +361,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         var indexesOfWords = [Int]()
         var smallestRow = 16
         var smallestColumn = 16
-        var word = String()
+        
         
         switch isRowWord {
             
@@ -393,19 +396,22 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     }
                     
                 }
-                
+                var word = String()
                 var dontQuit = true
                 while dontQuit {
                     var count = 1
+                    
                     outerLoop:  for tile in allTiles {
                         
                         if tile.column != nil && tile.myWhereInPlay == .board {
                             
                             
-                            if tile.row! == smallestColumn && tile.row! == smallestRow {
+                            if tile.column! == smallestColumn && tile.row! == smallestRow {
                                 
                                 
                                 word += tile.mySymbol.rawValue
+                               
+                                    wordTilesPerpendicular.append(tile)
                                 
                                 smallestRow += 1
                                 break outerLoop
@@ -413,15 +419,17 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 
                                 
                                 dontQuit = false
-                                if !isReal(word: word.lowercased()){
+                                if !isReal2(word: word.lowercased()){
                                     everythingChecksOut = false
+                                    print("everything: \(everythingChecksOut)")
                                     wordAlert(word: word)
                                 }
                             }
                             
                         } else if allTiles.count == count {
                             dontQuit = false
-                            if !isReal(word: word.lowercased()) {
+                            print("banana: \(word)")
+                            if !isReal2(word: word.lowercased()) {
                                 everythingChecksOut = false
                                 wordAlert(word: word)
                             }
@@ -439,11 +447,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 if tile.slotsIndex! - 15 > -1 {
                     if myBoard.slots[tile.slotsIndex! - 15].isOccupied {
                         indexesOfWords.append(tile.slotsIndex!)
+                        print("tile.slotsIndex: \(tile.slotsIndex)")
                     }
                 }
                 if tile.slotsIndex! + 15 < 225 {
                     if myBoard.slots[tile.slotsIndex! + 15].isOccupied {
                         indexesOfWords.append(tile.slotsIndex!)
+                        print("tile.slotsIndex: \(tile.slotsIndex)")
                     }
                 }
             }
@@ -458,6 +468,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         if tile.myWhereInPlay == .board && myBoard.slots[index].row == tile.row! && tile.column! + 1 == smallestColumn {
                             
                             smallestColumn = tile.column!
+                            print("walkingback on word")
+                            print(tile.column!)
                             isKeepGoing = true
                             break loop
                         }
@@ -466,8 +478,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
                 
                 var dontQuit = true
+                var word = String()
                 while dontQuit {
                     var count = 1
+                    
                     outerLoop:  for tile in allTiles {
                         
                         if tile.row != nil && tile.myWhereInPlay == .board {
@@ -477,26 +491,30 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 
                                 
                                 word += tile.mySymbol.rawValue
-                               
+                                print("perp word: \(word)")
+                                    wordTilesPerpendicular.append(tile)
+                                
                                 smallestColumn += 1
                                 break outerLoop
                             } else if allTiles.count == count {
                                 
                                 
                                 dontQuit = false
-                              if !isReal(word: word.lowercased()) {
-                                everythingChecksOut = false
-                                wordAlert(word: word)
+                                print("banana: \(word)")
+                                if !isReal2(word: word.lowercased()) {
+                                    everythingChecksOut = false
+                                    print("everything: \(everythingChecksOut)")
+                                    wordAlert(word: word)
                                 }
                             }
                             
                         } else if allTiles.count == count {
                             dontQuit = false
-                            if !isReal(word: word.lowercased()) {
+                            if !isReal2(word: word.lowercased()) {
                                 everythingChecksOut = false
                                 wordAlert(word: word)
                             }
-
+                            
                         }
                         count += 1
                     }
@@ -505,10 +523,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 
             }
         }
-        
-        
-        
-        
+
         return everythingChecksOut
     }
     
@@ -524,12 +539,16 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     func isReal(word: String) -> Bool? {
         var isWordBuildable = false
-        print(isWordBuildable)
-        print(wordTiles)
+        
         for tile in wordTiles {
-            print(isWordBuildable)
+            
             if tile.isBuildable { isWordBuildable = true }
-            print(isWordBuildable)
+            
+        }
+        for tile in wordTilesPerpendicular {
+            
+            if tile.isBuildable { isWordBuildable = true }
+            
         }
         guard isWordBuildable == true else {
             var isFirstPlayFunc = true
@@ -543,6 +562,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         let wordRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
         return wordRange.location == NSNotFound
+    }
+    
+    func isReal2(word: String) -> Bool {
+        let checker = UITextChecker()
+        let range = NSRange(location: 0, length: word.utf16.count)
+        let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
+        
+        return misspelledRange.location == NSNotFound
     }
     
     func addTilesToBoard() {
