@@ -23,11 +23,12 @@ class Tile: UIView {
         case a = "A",b = "B",c = "C",d = "D",e = "E",f = "F",g = "G",h = "H",i = "I",j = "J",k = "K",l = "L",m = "M",n = "N",o = "O",p = "P",q = "Q",r = "R",s = "S",t = "T",u = "U",v = "V",w = "W",x = "X",y = "Y",z = "Z"
     }
     
-    enum whereInPlay {
+    enum WhereInPlay {
         case board
         case atBat
         case onDeck
         case pile
+        case trash
     }
     
     var isLockedInPlace = Bool() {didSet{
@@ -47,7 +48,7 @@ class Tile: UIView {
     var column: Int?
     var mySymbol: symbol = .a
     var mySize: size = .medium { didSet { changeBlockSize() } }
-    var myWhereInPlay: whereInPlay = .atBat {
+    var myWhereInPlay: WhereInPlay = .atBat {
         didSet {
             switch myWhereInPlay {
             case .atBat:
@@ -60,6 +61,7 @@ class Tile: UIView {
                     self.mySize = .large
                 }
                 case .pile: break
+                case .trash: break
             }
             
         }
@@ -107,22 +109,23 @@ class Tile: UIView {
             text.textColor = .white
         }
     }
- 
+    var isFirstInit = true
     init() {
+//        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+//        self.frame = CGRect(x: 0, y: 0, width: 47*sw/375, height: 47*sw/375)
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        self.frame = CGRect(x: 0, y: 0, width: 47*sw/375, height: 47*sw/375)
+        self.frame = CGRect(x: 15*sw/375, y: 616*sh/667, width: 34*sw/375, height: 34*sw/375)
         self.isUserInteractionEnabled = true
+        if isFirstInit {
         setContents()
+            isFirstInit = false
+        }
         self.addSubview(shadowOfBlock)
         self.addSubview(topOfBlock)
        
         self.addSubview(text)
         changeBlockSize()
-        
-        
- 
-        
-        
+
     }
     
 //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
