@@ -22,9 +22,34 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <connections>
+                        <segue destination="uLc-hG-2cr" kind="presentation" identifier="fromGameToTutorial" modalPresentationStyle="overCurrentContext" id="rbp-jE-p2e"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-42" y="-130"/>
+        </scene>
+        <!--Tutorial View Controller-->
+        <scene sceneID="Zor-VU-q70">
+            <objects>
+                <viewController id="uLc-hG-2cr" customClass="TutorialViewController" customModule="WordGame" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="JRy-4M-dqm"/>
+                        <viewControllerLayoutGuide type="bottom" id="AHy-tK-UAB"/>
+                    </layoutGuides>
+                    <view key="view" opaque="NO" contentMode="scaleToFill" id="anr-Lz-Sgf">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="fromTutorialToGame" animates="NO" id="0IR-kF-yT8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8oF-IN-zcM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="822" y="-248"/>
         </scene>
     </scenes>
 </document>

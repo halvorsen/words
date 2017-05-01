@@ -18,6 +18,7 @@
 		0625A52F1EABA4880064E97B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A52E1EABA4880064E97B /* Extensions.swift */; };
 		0644A81D1EABBA890083A4A2 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81C1EABBA890083A4A2 /* Board.swift */; };
 		0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81E1EAD3CC00083A4A2 /* Slot.swift */; };
+		06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A454061EB65390007F3F71 /* TutorialViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		0625A52E1EABA4880064E97B /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0644A81C1EABBA890083A4A2 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		0644A81E1EAD3CC00083A4A2 /* Slot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		06A454061EB65390007F3F71 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				0625A52C1EAABB460064E97B /* Tile.swift */,
 				0625A52E1EABA4880064E97B /* Extensions.swift */,
 				0625A5151EAAB9C20064E97B /* Main.storyboard */,
+				06A454061EB65390007F3F71 /* TutorialViewController.swift */,
 				0625A51B1EAAB9C20064E97B /* Assets.xcassets */,
 				0625A51D1EAAB9C20064E97B /* LaunchScreen.storyboard */,
 				0625A5201EAAB9C20064E97B /* Info.plist */,
@@ -179,6 +182,7 @@
 			files = (
 				0625A52F1EABA4880064E97B /* Extensions.swift in Sources */,
 				0625A5141EAAB9C20064E97B /* GameViewController.swift in Sources */,
+				06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */,
 				0644A81D1EABBA890083A4A2 /* Board.swift in Sources */,
 				0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */,
 				0625A51A1EAAB9C20064E97B /* WordGame.xcdatamodeld in Sources */,

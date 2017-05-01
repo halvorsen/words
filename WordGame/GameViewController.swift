@@ -53,12 +53,22 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var trash = UIImageView()
     var onTheBoard: Int = 0
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
+    
     override func viewWillAppear(_ animated: Bool) {
         doubleTap.numberOfTapsRequired = 2
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let menuButton = UIButton()
+        menuButton.frame = CGRect(x: 0, y: 0, width: 75*sw/375, height: 75*sw/375)
+        menuButton.setImage(#imageLiteral(resourceName: "menu"), for: .normal)
+        menuButton.addTarget(self, action: #selector(GameViewController.menuFunc(_:)), for: .touchUpInside)
+        view.addSubview(menuButton)
         trash.frame = CGRect(x: 309*sw/375, y: 551*sh/667, width: 66*sw/375, height: 116*sw/375)
         trash.image = #imageLiteral(resourceName: "trash")
         view.addSubview(trash)
@@ -95,8 +105,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         view.addGestureRecognizer(doubleTap)
         tap.require(toFail: doubleTap)
         doubleTap.numberOfTapsRequired = 2
+        delay(bySeconds: 1.0){
+        self.performSegue(withIdentifier: "fromGameToTutorial", sender: self)
+        }
     }
-    
+    @objc private func menuFunc(_ button: UIButton) {
+        
+    }
     
     private func findTheString(callback: (_ word: String?, _ rowWord: Bool, _ tilesInPlay: [Tile]) -> Void) {
         var tilesInPlay = [Tile]()
@@ -322,9 +337,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     for i in 0..<wordTiles.count {
                         wordTiles[i].isBuildable = true
                         delay(bySeconds: 0.2*Double(i)+0.4) {
-                            if self.playButton.isDescendant(of: self.view) {
-                                self.playButton.removeFromSuperview()
-                            }
+//                            if self.playButton.isDescendant(of: self.view) {
+//                                self.playButton.removeFromSuperview()
+//                            }
                             self.wordTiles[i].isLockedInPlace = true
                             if self.wordTiles[i].isStarterBlock {
                                 self.wordTiles[i].isStarterBlock = false
@@ -363,6 +378,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func wordAlert(word: String) {
+        wordTiles.removeAll()
+        wordTilesPerpendicular.removeAll()
         isFirstPlayFunc = true
         let alert = UIAlertController(title: word.uppercased(), message: "Not a word", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
@@ -1046,13 +1063,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         movingTile?.slotsIndex = ct
                         movingTile?.myWhereInPlay = .board
                         movingTile?.atBatTileOrder = nil
-                        onTheBoard += 1
+                      //  onTheBoard += 1
                         movingTile?.row = slotView.row
                         movingTile?.column = slotView.column
                         if Set1.isZoomed == false {
                             myBoard.zoomIn() { () -> Void in
                                 if !playButton.isDescendant(of: view) {
                                     view.addSubview(playButton)
+                                }
+                                if myBoard.slots[14].isOccupied {
+                                    playButton.frame.origin = CGPoint(x: 164*sw/375, y: 72*sh/667)
+                                    playButton.layer.borderColor = UIColor.black.cgColor
+                                    playButton.layer.borderWidth = 1
                                 }
                                 myBoard.contentOffset.x = slotView.frame.origin.x - myBoard.bounds.width/2 + slotView.frame.width/2
                                 if myBoard.contentOffset.x < 0 {
@@ -1426,23 +1448,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
     }
     
-    public func delay(bySeconds seconds: Double, dispatchLevel: DispatchLevel = .main, closure: @escaping () -> Void) {
-        let dispatchTime = DispatchTime.now() + seconds
-        dispatchLevel.dispatchQueue.asyncAfter(deadline: dispatchTime, execute: closure)
-    }
     
-    public enum DispatchLevel {
-        case main, userInteractive, userInitiated, utility, background
-        var dispatchQueue: DispatchQueue {
-            switch self {
-            case .main:                 return DispatchQueue.main
-            case .userInteractive:      return DispatchQueue.global(qos: .userInteractive)
-            case .userInitiated:        return DispatchQueue.global(qos: .userInitiated)
-            case .utility:              return DispatchQueue.global(qos: .utility)
-            case .background:           return DispatchQueue.global(qos: .background)
-            }
-        }
-    }
     
 }
 
