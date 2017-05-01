@@ -106,6 +106,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         tap.require(toFail: doubleTap)
         doubleTap.numberOfTapsRequired = 2
         delay(bySeconds: 1.0){
+           // self.view.alpha = 0.2
         self.performSegue(withIdentifier: "fromGameToTutorial", sender: self)
         }
     }
@@ -1071,7 +1072,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 if !playButton.isDescendant(of: view) {
                                     view.addSubview(playButton)
                                 }
-                                if myBoard.slots[14].isOccupied {
+                                if myBoard.slots[14].isOccupied || myBoard.slots[29].isOccupied {
                                     playButton.frame.origin = CGPoint(x: 164*sw/375, y: 72*sh/667)
                                     playButton.layer.borderColor = UIColor.black.cgColor
                                     playButton.layer.borderWidth = 1
