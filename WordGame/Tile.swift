@@ -108,6 +108,7 @@ class Tile: UIView {
             topOfBlock.backgroundColor = myColor.black80
             text.textColor = .white
         }
+        
     }
     var isFirstInit = true
     init() {

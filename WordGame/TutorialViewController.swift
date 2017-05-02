@@ -12,6 +12,7 @@ class TutorialViewController: UIViewController {
     let slide1 = UIImageView()
     let slide2 = UIImageView()
     let slide3 = UIImageView()
+    let slide4 = UIImageView()
     
     var viewOnScreen = UIImageView()
     
@@ -24,6 +25,7 @@ class TutorialViewController: UIViewController {
         setupSlide1()
         setupSlide2()
         setupSlide3()
+        setupSlide4()
         
     }
     @objc private func swipeFunc(_ gesture: UIPanGestureRecognizer) {
@@ -38,6 +40,9 @@ class TutorialViewController: UIViewController {
                     self.slide3.frame.origin.x -= self.sw
                 case self.slide3:
                     self.slide3.frame.origin.x -= self.sw
+                    self.slide4.frame.origin.x -= self.sw
+                case self.slide4:
+                    self.slide4.frame.origin.x -= self.sw
                     
                 default: break
                 }
@@ -47,9 +52,9 @@ class TutorialViewController: UIViewController {
                 switch viewOnScreen {
                 case slide1: viewOnScreen = slide2
                 case slide2: viewOnScreen = slide3
-                case slide3: delay(bySeconds: 1.0) {
+                case slide3: viewOnScreen = slide4
+                case slide4: delay(bySeconds: 1.0) {
                     self.dismiss(animated: true, completion: nil)
-                    //self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
                     }
                 default: break
                 }
@@ -76,6 +81,13 @@ class TutorialViewController: UIViewController {
         slide3.layer.cornerRadius = sw/50
         slide3.layer.masksToBounds = true
         view.addSubview(slide3)
+    }
+    private func setupSlide4() {
+        slide4.frame = CGRect(x: 40*sw/375 + sw, y: 70*sh/667, width: 295*sw/375, height: 527*sh/667)
+        slide4.image = #imageLiteral(resourceName: "Tutorial4")
+        slide4.layer.cornerRadius = sw/50
+        slide4.layer.masksToBounds = true
+        view.addSubview(slide4)
     }
     
 }

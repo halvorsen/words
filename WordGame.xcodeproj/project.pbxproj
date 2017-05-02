@@ -19,6 +19,7 @@
 		0644A81D1EABBA890083A4A2 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81C1EABBA890083A4A2 /* Board.swift */; };
 		0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81E1EAD3CC00083A4A2 /* Slot.swift */; };
 		06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A454061EB65390007F3F71 /* TutorialViewController.swift */; };
+		06C25AE21EB81D670057DBFE /* LoadSaveCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		0644A81C1EABBA890083A4A2 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		0644A81E1EAD3CC00083A4A2 /* Slot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		06A454061EB65390007F3F71 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
+		06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadSaveCoreData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				0625A52B1EAABA9A0064E97B /* WordGame.entitlements */,
 				0625A5111EAAB9C20064E97B /* AppDelegate.swift */,
 				0625A5131EAAB9C20064E97B /* GameViewController.swift */,
+				06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */,
 				0644A81E1EAD3CC00083A4A2 /* Slot.swift */,
 				0644A81C1EABBA890083A4A2 /* Board.swift */,
 				0625A52C1EAABB460064E97B /* Tile.swift */,
@@ -187,6 +190,7 @@
 				0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */,
 				0625A51A1EAAB9C20064E97B /* WordGame.xcdatamodeld in Sources */,
 				0625A5121EAAB9C20064E97B /* AppDelegate.swift in Sources */,
+				06C25AE21EB81D670057DBFE /* LoadSaveCoreData.swift in Sources */,
 				0625A52D1EAABB460064E97B /* Tile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
