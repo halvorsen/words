@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06110EA71EB8CD2800C901C5 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06110EA61EB8CD2800C901C5 /* MenuViewController.swift */; };
 		0625A5121EAAB9C20064E97B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A5111EAAB9C20064E97B /* AppDelegate.swift */; };
 		0625A5141EAAB9C20064E97B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A5131EAAB9C20064E97B /* GameViewController.swift */; };
 		0625A5171EAAB9C20064E97B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0625A5151EAAB9C20064E97B /* Main.storyboard */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06110EA61EB8CD2800C901C5 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		0625A50E1EAAB9C20064E97B /* WordGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0625A5111EAAB9C20064E97B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0625A5131EAAB9C20064E97B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				0625A52E1EABA4880064E97B /* Extensions.swift */,
 				0625A5151EAAB9C20064E97B /* Main.storyboard */,
 				06A454061EB65390007F3F71 /* TutorialViewController.swift */,
+				06110EA61EB8CD2800C901C5 /* MenuViewController.swift */,
 				0625A51B1EAAB9C20064E97B /* Assets.xcassets */,
 				0625A51D1EAAB9C20064E97B /* LaunchScreen.storyboard */,
 				0625A5201EAAB9C20064E97B /* Info.plist */,
@@ -184,6 +187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0625A52F1EABA4880064E97B /* Extensions.swift in Sources */,
+				06110EA71EB8CD2800C901C5 /* MenuViewController.swift in Sources */,
 				0625A5141EAAB9C20064E97B /* GameViewController.swift in Sources */,
 				06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */,
 				0644A81D1EABBA890083A4A2 /* Board.swift in Sources */,

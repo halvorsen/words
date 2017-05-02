@@ -8,7 +8,8 @@
 
 import UIKit
 
-class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate {
+class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, restartDelegate {
+
     var isFirstPlayFunc = true
     let myColor = CustomColor()
     let myBoard = Board.sharedInstance
@@ -69,6 +70,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        myLoad()
+    }
+    private func myLoad() {
+        
         let menuButton = UIButton()
         menuButton.frame = CGRect(x: 0, y: 0, width: 75*sw/375, height: 75*sw/375)
         menuButton.setImage(#imageLiteral(resourceName: "menu"), for: .normal)
@@ -135,10 +141,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         boostIndicator.textAlignment = .center
         boostIndicator.alpha = 0.5
         view.addSubview(boostIndicator)
+
     }
-    
-    
+    var myMenu = MenuViewController()
     override func viewWillAppear(_ animated: Bool) {
+
         doubleTap.numberOfTapsRequired = 2
         let a = LoadSaveCoreData.sharedInstance.loadBoost()
         if a != nil {
@@ -170,7 +177,16 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     @objc private func menuFunc(_ button: UIButton) {
-        
+       // self.present(myMenu, animated: true, completion: nil)
+       // self.presentModalViewController(myMenu, animated: true)
+        performSegue(withIdentifier: "fromGameToMenu", sender: self)
+    }
+    func backFromCamera() {
+        print("Back from camera")
+    }
+    
+    func leave() {
+        dismiss(animated: true, completion: nil)
     }
     
     private func findTheString(callback: (_ word: String?, _ rowWord: Bool, _ tilesInPlay: [Tile]) -> Void) {
@@ -431,7 +447,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     
                     for i in 0..<wordTiles.count {
                         wordTiles[i].isBuildable = true
-                        delay(bySeconds: 0.5*Double(i)+0.4) {
+                        delay(bySeconds: 0.2*Double(i)+0.6) {
                             
                             self.wordTiles[i].isLockedInPlace = true
                             if self.wordTiles[i].isStarterBlock {
@@ -512,13 +528,15 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
     }
     private func winSequence() {
+        Set1.wins += 1
+        Set1.winState = true
         let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
         win.text = "WIN!"
         win.textAlignment = .center
         win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
         view.addSubview(win)
         trash.removeFromSuperview()
-        for i in 0...100 {
+        for i in 0...10 {
             delay(bySeconds: 1.0*Double(i)) {
                 for tile in self.allTiles {
                     tile.topOfBlock.backgroundColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
@@ -527,6 +545,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
             }
         }
+        view.removeGestureRecognizer(tap)
+        view.removeGestureRecognizer(pan)
+        view.removeGestureRecognizer(doubleTap)
     }
     
     private func bonusPile() {
@@ -623,13 +644,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         var flippedBonus = 1
         switch length {
         case 5:
-            pileBonus = 5
+            pileBonus = 3
             flippedBonus = 0
         case 6:
-            pileBonus = 6
+            pileBonus = 5
             flippedBonus = 1
         case 7:
-            pileBonus = 9
+            pileBonus = 8
             flippedBonus = 2
         case 8:
             pileBonus = 10
@@ -640,6 +661,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         case 10,11,12,13,14,15:
             pileBonus = 12
             flippedBonus = 2
+            amountOfBoosts += 1
         default:
             break
         }
@@ -1427,6 +1449,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
     }
     private func moveButton() {
+        guard myBoard.slots.count > 0 else {return}
         if myBoard.slots[14].isOccupied || myBoard.slots[29].isOccupied || myBoard.slots[13].isOccupied || myBoard.slots[28].isOccupied {
             
             self.playButton.frame.origin = CGPoint(x: 312*self.sw/375, y: 425*self.sh/667)
@@ -1768,7 +1791,33 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             return false
         }
     }
+    func restart() {
+        view.subviews.forEach({ $0.removeFromSuperview() })
+       // myBoard.subviews.forEach({ $0.removeFromSuperview() })
+        for case let view as Tile in myBoard.subviews {
+            view.removeFromSuperview()
+        }
+        
+        print("Hi")
+        isFirstPlayFunc = true
+
+        allTiles.removeAll()
+
+        onDeckTiles.removeAll()
+        wordTiles.removeAll()
+        wordTilesPerpendicular.removeAll()
+        for slot in myBoard.slots {
+            slot.isOccupied = false
+            slot.isPermanentlyOccupied = false
+            slot.isOccupiedFromStart = false
+        }
+       pileOfTiles = 15
+        myBoard.zoomOut(){}
+        myLoad()
+        
+    }
     
+
     
     
 }

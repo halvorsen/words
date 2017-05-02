@@ -9,6 +9,27 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Menu View Controller-->
+        <scene sceneID="T1e-JP-nxT">
+            <objects>
+                <viewController id="TJb-xL-gkr" customClass="MenuViewController" customModule="WordGame" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="h7a-NS-e2A"/>
+                        <viewControllerLayoutGuide type="bottom" id="Gvw-Ra-8do"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="g6I-e0-vfB">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="fromMenuToGame" id="IZG-Gr-bw3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N59-Bh-BbL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="663" y="-908"/>
+        </scene>
         <!--Game View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -24,6 +45,7 @@
                     </view>
                     <connections>
                         <segue destination="uLc-hG-2cr" kind="presentation" identifier="fromGameToTutorial" modalPresentationStyle="overCurrentContext" id="rbp-jE-p2e"/>
+                        <segue destination="TJb-xL-gkr" kind="presentation" identifier="fromGameToMenu" modalPresentationStyle="overCurrentContext" id="S4b-zQ-1BE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -43,9 +65,6 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="show" identifier="fromTutorialToGame" animates="NO" id="0IR-kF-yT8"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8oF-IN-zcM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

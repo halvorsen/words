@@ -7,7 +7,12 @@
         <attribute name="string1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="value1" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
+    <entity name="Record" representedClassName="Record" syncable="YES" codeGenerationType="class">
+        <attribute name="loses" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="wins" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
     <elements>
         <element name="IAP" positionX="-63" positionY="-18" width="128" height="120"/>
+        <element name="Record" positionX="-63" positionY="18" width="128" height="75"/>
     </elements>
 </model>

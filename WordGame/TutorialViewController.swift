@@ -53,7 +53,7 @@ class TutorialViewController: UIViewController {
                 case slide1: viewOnScreen = slide2
                 case slide2: viewOnScreen = slide3
                 case slide3: viewOnScreen = slide4
-                case slide4: delay(bySeconds: 1.0) {
+                case slide4: delay(bySeconds: 0.5) {
                     self.dismiss(animated: true, completion: nil)
                     }
                 default: break

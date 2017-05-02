@@ -50,5 +50,23 @@ struct CustomColor {
 public struct Set1 {
     
     public static var isZoomed: Bool = false
+    public static var wins: Int = 0 { didSet {
+        LoadSaveCoreData.sharedInstance.saveWinLoses()
+        print("wins: \(wins)")
+        }
+    }
+    public static var loses: Int = 0 { didSet {
+        LoadSaveCoreData.sharedInstance.saveWinLoses()
+        print("loses: \(loses)")
+        }
+        }
+    public static var winState: Bool = false
+    
 
 }
+
+protocol restartDelegate: class {
+    func restart()
+}
+
+
