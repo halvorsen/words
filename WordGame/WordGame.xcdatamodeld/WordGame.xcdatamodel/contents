@@ -11,8 +11,19 @@
         <attribute name="loses" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="wins" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
+    <entity name="Save" representedClassName="Save" syncable="YES" codeGenerationType="class">
+        <attribute name="atBatRawValue" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="buildableRawValue" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="indexBuildable" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="indexStart" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="isWinMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="onDeckRawValue" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="pileAmount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="startRawValue" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
     <elements>
         <element name="IAP" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="Record" positionX="-63" positionY="18" width="128" height="75"/>
+        <element name="Save" positionX="-63" positionY="18" width="128" height="165"/>
     </elements>
 </model>

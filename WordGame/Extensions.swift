@@ -61,7 +61,13 @@ public struct Set1 {
         }
         }
     public static var winState: Bool = false
-    
+    public static var indexBuildable = [Int]()
+    public static var onDeckRawValue = [String]()
+    public static var atBatRawValue = [String]()
+    public static var buildableRawValue = [String]()
+    public static var indexStart = [Int]()
+    public static var startRawValue = [String]()
+    public static var pileAmount = Int()
 
 }
 

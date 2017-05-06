@@ -26,7 +26,7 @@ class MenuViewController: UIViewController {
         
         wins = Set1.wins
         loses = Set1.loses
-        self.delegate = presentingViewController! as! restartDelegate
+        self.delegate = presentingViewController! as? restartDelegate
         let pan = UIPanGestureRecognizer(target: self, action: #selector(MenuViewController.swipeFunc(_:)))
         view.addGestureRecognizer(pan)
         view.backgroundColor = UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0.8)
@@ -64,7 +64,7 @@ class MenuViewController: UIViewController {
             (454,"New Game",#selector(MenuViewController.newGameFunc(_:)))
         ]
         
-        for (y,text,selector) in buttons {
+        for (y,_,selector) in buttons {
             let button = UIButton()
 //            button.setTitle(text, for: UIControlState.normal)
             button.frame = CGRect(x: 67*sw/375, y: y*sh/667, width: 161*sw/375, height: 48*sh/667)
