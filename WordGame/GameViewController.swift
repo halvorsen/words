@@ -258,6 +258,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     isSameRow = true
                     isSameColumn = false
                 }
+                if tile.isLockedInPlace == true && tile.row == wordTiles[0].row! + 1 {
+                    isSameRow = false
+                    isSameColumn = true
+                }
+                if tile.isLockedInPlace == true && tile.column == wordTiles[0].column! + 1 {
+                    isSameRow = true
+                    isSameColumn = false
+                }
             }
         }
         
@@ -640,8 +648,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     private func longWordBonus(length: Int) {
         print("longwordbonus")
-        var pileBonus = 1
-        var flippedBonus = 1
+        var pileBonus = 0
+        var flippedBonus = 0
         switch length {
         case 5:
             pileBonus = 3
@@ -749,6 +757,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
                 var word = String()
                 var dontQuit = true
+                var perpedicularWordHasNewLetter = false
                 while dontQuit {
                     var count = 1
                     
@@ -759,7 +768,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             
                             if tile.column! == smallestColumn && tile.row! == smallestRow {
                                 
-                                
+                                if !tile.isBuildable { perpedicularWordHasNewLetter = true }
                                 word += tile.mySymbol.rawValue
                                 
                                 wordTilesPerpendicular.append(tile)
@@ -774,6 +783,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                     everythingChecksOut = false
                                     print("everything: \(everythingChecksOut)")
                                     wordAlert(word: word)
+                                } else {
+                                    if perpedicularWordHasNewLetter && word.characters.count > 4 {
+                                    longWordBonus(length: word.characters.count)
+                                    }
                                 }
                             }
                             
@@ -783,6 +796,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             if !isReal2(word: word.lowercased()) {
                                 everythingChecksOut = false
                                 wordAlert(word: word)
+                            } else {
+                                if perpedicularWordHasNewLetter && word.characters.count > 4 {
+                                    longWordBonus(length: word.characters.count)
+                                }
                             }
                             
                         }
@@ -833,6 +850,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 
                 var dontQuit = true
                 var word = String()
+                var perpendicularWordHasNewLetter = false
                 while dontQuit {
                     var count = 1
                     
@@ -860,6 +878,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                     everythingChecksOut = false
                                   
                                     wordAlert(word: word)
+                                } else {
+                                    if perpendicularWordHasNewLetter && word.characters.count > 4 {
+                                        longWordBonus(length: word.characters.count)
+                                    }
                                 }
                             }
                             
@@ -868,6 +890,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             if !isReal2(word: word.lowercased()) {
                                 everythingChecksOut = false
                                 wordAlert(word: word)
+                            } else {
+                                if perpendicularWordHasNewLetter && word.characters.count > 4 {
+                                    longWordBonus(length: word.characters.count)
+                                }
                             }
                             
                         }
@@ -886,6 +912,30 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
     }
     
+    private func rearrangeAtBat() {
+        var container = [Int]()
+        var taken = [Int]()
+        for tile in allTiles {
+            if tile.myWhereInPlay == .atBat {
+                container.append(tile.atBatTileOrder!)
+            }
+        }
+        for tile in allTiles {
+            if tile.myWhereInPlay == .atBat {
+                if taken.contains(tile.atBatTileOrder!) {
+                    for i in 0...6 {
+                        if !container.contains(i) {
+                            tile.atBatTileOrder = i
+                            container.append(tile.atBatTileOrder!)
+                            dropTileWhereItBelongs(tile: tile)
+                        }
+                    }
+                }
+                taken.append(tile.atBatTileOrder!)
+            }
+        }
+    }
+    
     private func lockTilesAndRefillRack() {
         
         refillMode = true
@@ -894,17 +944,31 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     func isReal(word: String) -> Bool? {
         var isWordBuildable = false
+        var tilesInPlay = [Tile]()
+        for tile in allTiles {
+            if tile.myWhereInPlay == .board && tile.isLockedInPlace == false {
+                tilesInPlay.append(tile)
+            }
+        }
         
-        for tile in wordTiles {
-            
-            if tile.isBuildable { isWordBuildable = true }
-            
+        for tile in allTiles {
+            if tile.isBuildable || tile.isStarterBlock {
+                for tile2 in tilesInPlay {
+                    if tile2.row! - 1 == tile.row! || tile2.row! + 1 == tile.row! || tile2.column! - 1 == tile.row! || tile2.column! + 1 == tile.column! { isWordBuildable = true }
+                }
+            }
         }
-        for tile in wordTilesPerpendicular {
-            
-            if tile.isBuildable { isWordBuildable = true }
-            
-        }
+        
+//        for tile in wordTiles {
+//            
+//            if tile.isBuildable { isWordBuildable = true }
+//            
+//        }
+//        for tile in wordTilesPerpendicular {
+//            
+//            if tile.isBuildable { isWordBuildable = true }
+//            
+//        }
         guard isWordBuildable == true else {
             //          var isFirstPlayFunc = true
             let alert = UIAlertController(title: word.uppercased(), message: "Must build off black tiles", preferredStyle: UIAlertControllerStyle.alert)
@@ -1090,11 +1154,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     if !myBoard.slots[_oneIndex - 1].isOccupied && !myBoard.slots[_oneIndex + 1].isOccupied && !myBoard.slots[_oneIndex - 15].isOccupied && !myBoard.slots[_oneIndex + 15].isOccupied {
                         let tile = Tile()
                         tile.isStarterBlock = true
+                        
                         tile.mySymbol = pickRandomLetter()
                         tile.myWhereInPlay = .board
                         tile.isLockedInPlace = true
                         let slot = myBoard.slots[_oneIndex]
                         tile.slotsIndex = _oneIndex
+                        
                         slot.isOccupied = true
                         slot.isPermanentlyOccupied = true
                         slot.isOccupiedFromStart = true
@@ -1102,8 +1168,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         tile.column = slot.column
                         
                         view.addSubview(tile)
-                        allTiles.append(tile)
+                        
+                        
                         dropTileWhereItBelongs(tile: tile)
+                        print("Symbol: \(tile.mySymbol) For Index: \(tile.slotsIndex)")
+                        allTiles.append(tile)
                     }
                 }
             }
@@ -1377,7 +1446,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     self.refillMode = true
                     self.movingTile = nil
                     self.movingTile?.layer.zPosition = 0
-                    
+                    self.rearrangeAtBat()
                 }
             } else if movingTile != nil {
                 var ct = 0
@@ -1441,6 +1510,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
                 movingTile?.layer.zPosition = 0
                 movingTile = nil
+                rearrangeAtBat()
             }
         default:
             break

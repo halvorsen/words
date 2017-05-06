@@ -97,7 +97,9 @@ class MenuViewController: UIViewController {
         
     }
     @objc private func newGameFunc(_ button: UIButton) {
+        if !Set1.winState {
         Set1.loses += 1
+        }
         Set1.winState = false
         delegate?.restart()
         dismiss(animated: true, completion: nil)
