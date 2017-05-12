@@ -22,7 +22,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var wordTiles = [Tile]()
     var wordTilesPerpendicular = [Tile]()
     let pile = Tile()
-    var pileOfTiles = 20 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = pileOfTilesString } }
+    var pileOfTiles = 25 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = pileOfTilesString } }
     var pileOfTilesString = "x15"
     var isNotSameTile = false
     let onDeckAlpha: CGFloat = 0.1
@@ -677,7 +677,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func longWordBonus(length: Int) {
-        print("longwordbonus")
+    
         var pileBonus = 0
         var flippedBonus = 0
         switch length {
@@ -1997,7 +1997,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             slot.isPermanentlyOccupied = false
             slot.isOccupiedFromStart = false
         }
-        pileOfTiles = 20
+        pileOfTiles = 25
         myBoard.zoomOut(){}
         myLoad()
         for tile in allTiles {
