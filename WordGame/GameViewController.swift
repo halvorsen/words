@@ -22,7 +22,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var wordTiles = [Tile]()
     var wordTilesPerpendicular = [Tile]()
     let pile = Tile()
-    var pileOfTiles = 15 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = "x" + pileOfTilesString } }
+    var pileOfTiles = 20 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = pileOfTilesString } }
     var pileOfTilesString = "x15"
     var isNotSameTile = false
     let onDeckAlpha: CGFloat = 0.1
@@ -470,7 +470,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 
                             }
                             if bonusTiles.contains(self.wordTiles[i].mySymbol.rawValue) {
-                                self.bonusPile()
+                                self.bonusPile(character: self.wordTiles[i].mySymbol.rawValue)
                             }
                             if i == self.wordTiles.count - 1 {
                                 print("pre-award lengthofword: \(self.lengthOfWord)")
@@ -588,12 +588,12 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         view.removeGestureRecognizer(doubleTap)
     }
     
-    private func bonusPile() {
-        print("bonuspile")
+    private func bonusPile(character: String? = nil) {
+        
         pileOfTiles += 1
         let bonus = UILabel(frame: CGRect(x: 22*sw/375, y: 625*sh/667, width: 20*sw/375, height: 16*sw/375))
         bonus.font = UIFont(name: "ArialRoundedMTBold", size: 14*fontSizeMultiplier)
-        bonus.text = "+1"
+        if character != nil { bonus.text = "+1" + character! } else { bonus.text = "+1" }
         view.addSubview(bonus)
         UIView.animate(withDuration: 2.5) {
             bonus.frame.origin = CGPoint(x: 22*self.sw/375, y: 550*self.sh/667)
@@ -605,7 +605,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
     }
     private func bonusOnDeck(x: CGFloat, y: CGFloat, text: String = "+1") {
-        print("bonusOndeck")
+        
         let bonus = UILabel(frame: CGRect(x: x, y: y, width: 50*sw/375, height: 16*sw/375))
         bonus.font = UIFont(name: "ArialRoundedMTBold", size: 14*fontSizeMultiplier)
         bonus.text = text
@@ -685,19 +685,19 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             pileBonus = 3
             flippedBonus = 0
         case 6:
-            pileBonus = 5
+            pileBonus = 4
             flippedBonus = 1
         case 7:
-            pileBonus = 8
+            pileBonus = 5
             flippedBonus = 2
         case 8:
-            pileBonus = 10
+            pileBonus = 5
             flippedBonus = 2
         case 9:
-            pileBonus = 11
+            pileBonus = 5
             flippedBonus = 2
         case 10,11,12,13,14,15:
-            pileBonus = 12
+            pileBonus = 6
             flippedBonus = 2
             amountOfBoosts += 1
         default:
@@ -800,7 +800,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 
                                 if !tile.isBuildable { perpedicularWordHasNewLetter = true }
                                 word += tile.mySymbol.rawValue
-                                
                                 wordTilesPerpendicular.append(tile)
                                 
                                 smallestRow += 1
@@ -811,7 +810,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 dontQuit = false
                                 if !isReal2(word: word.lowercased()){
                                     everythingChecksOut = false
-                                    print("everything: \(everythingChecksOut)")
                                     wordAlert(word: word)
                                 } else {
                                     if perpedicularWordHasNewLetter && word.characters.count > 4 {
@@ -822,7 +820,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             
                         } else if allTiles.count == count {
                             dontQuit = false
-                            print("banana: \(word)")
                             if !isReal2(word: word.lowercased()) {
                                 everythingChecksOut = false
                                 wordAlert(word: word)
@@ -869,8 +866,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         if tile.myWhereInPlay == .board && myBoard.slots[index].row == tile.row! && tile.column! + 1 == smallestColumn {
                             
                             smallestColumn = tile.column!
-                            print("walkingback on word")
-                            print(tile.column!)
                             isKeepGoing = true
                             break loop
                         }
@@ -880,7 +875,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 
                 var dontQuit = true
                 var word = String()
-                let perpendicularWordHasNewLetter = false
+                var perpendicularWordHasNewLetter = false
                 while dontQuit {
                     var count = 1
                     
@@ -891,10 +886,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             
                             if tile.row! == smallestRow && tile.column! == smallestColumn {
                                 
-                                
+                                if !tile.isBuildable { perpendicularWordHasNewLetter = true }
                                 word += tile.mySymbol.rawValue
-                                print("perp word: \(word)")
-                                print("wordTilesPerpendicular: \(wordTilesPerpendicular)")
                                 wordTilesPerpendicular.append(tile)
                                 
                                 smallestColumn += 1
@@ -903,10 +896,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                 
                                 
                                 dontQuit = false
-                                
                                 if !isReal2(word: word.lowercased()) {
                                     everythingChecksOut = false
-                                    
                                     wordAlert(word: word)
                                 } else {
                                     if perpendicularWordHasNewLetter && word.characters.count > 4 {
@@ -984,7 +975,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         for tile in allTiles {
             if tile.isBuildable || tile.isStarterBlock {
                 for tile2 in tilesInPlay {
-                    if tile2.row! - 1 == tile.row! || tile2.row! + 1 == tile.row! || tile2.column! - 1 == tile.row! || tile2.column! + 1 == tile.column! { isWordBuildable = true }
+                    if tile2.row! - 1 == tile.row! || tile2.row! + 1 == tile.row! || tile2.column! - 1 == tile.column! || tile2.column! + 1 == tile.column! { isWordBuildable = true }
                 }
             }
         }
@@ -1034,6 +1025,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         let range = NSRange(location: 0, length: word.utf16.count)
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
+        if word == "fe" || word == "ki" || word == "oi" || word == "qi" || word == "za" || word == "qis" || word == "zas" || word == "fes" || word == "kis" {
+            return true
+        }
+        
         return misspelledRange.location == NSNotFound
     }
     
@@ -1057,7 +1052,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     func addTilesToBoard() {
         if isFirstLoading || startingNewGame {
-            for i in 0...9 {
+            for i in 0...4 {
                 let tile = Tile()
                 tile.mySymbol = pickRandomLetter()
                 tile.onDeckTileOrder = i
@@ -1351,6 +1346,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         rearrangeOnDeck(gone: tile.onDeckTileOrder!)
                     } else {
                         delay(bySeconds: 0.1) { self.once = true }
+                    }
+                    //maybe fixes the color problem???
+                    for tile in allTiles {
+                        if tile.myWhereInPlay == .onDeck {
+                            tile.topOfBlock.backgroundColor = myColor.black80
+                            tile.text.textColor = .white
+                        }
                     }
                 }
             }
@@ -1915,7 +1917,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func pickRandomLetter() -> Tile.symbol {
-        let random = arc4random_uniform(97)
+        let random = arc4random_uniform(98)
         let myTile = Tile()
         switch random {
         case 0...11:
@@ -1979,12 +1981,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     func restart() {
         startingNewGame = true
         view.subviews.forEach({ $0.removeFromSuperview() })
-        // myBoard.subviews.forEach({ $0.removeFromSuperview() })
         for case let view as Tile in myBoard.subviews {
             view.removeFromSuperview()
         }
-        
-        print("Hi")
+
         isFirstPlayFunc = true
         
         allTiles.removeAll()
@@ -1997,9 +1997,17 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             slot.isPermanentlyOccupied = false
             slot.isOccupiedFromStart = false
         }
-        pileOfTiles = 15
+        pileOfTiles = 20
         myBoard.zoomOut(){}
         myLoad()
+        for tile in allTiles {
+            if tile.isStarterBlock {
+                tile.topOfBlock.backgroundColor = .white
+                tile.text.textColor = myColor.black80
+            }
+        }
+        pile.topOfBlock.backgroundColor = .white
+        pile.text.textColor = myColor.black80
         startingNewGame = false
         storeWholeState()
         LoadSaveCoreData.sharedInstance.saveState()
