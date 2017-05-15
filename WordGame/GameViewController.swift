@@ -75,8 +75,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         super.viewDidLoad()
         isFirstLoading = !UserDefaults.standard.bool(forKey: "launchedBefore")
         myLoad()
+        for tile in allTiles {
+            if tile.myWhereInPlay == .atBat {
+                print("ATBAT")
+            }
+        }
     }
     private func myLoad() {
+        
         let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
         let menuButton = UIButton()
         menuButton.frame = CGRect(x: 0, y: 0, width: 75*sw/375, height: 75*sw/375)
@@ -547,18 +553,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     private func winSequence() {
         Set1.wins += 1
         Set1.winState = true
-        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
-        win.text = "WIN!"
-        win.textAlignment = .center
-        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
-        view.addSubview(win)
+//        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
+//        win.text = "WIN!"
+//        win.textAlignment = .center
+//        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
+//        view.addSubview(win)
         
         for i in 0...10 {
             delay(bySeconds: 1.0*Double(i)) {
                 for tile in self.allTiles {
                     tile.topOfBlock.backgroundColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
-                    tile.text.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
-                    win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
+                    tile.text.textColor = .black
+              //      win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                 }
             }
         }
@@ -591,8 +597,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     private func bonusPile(character: String? = nil) {
         
         pileOfTiles += 1
-        let bonus = UILabel(frame: CGRect(x: 22*sw/375, y: 625*sh/667, width: 20*sw/375, height: 16*sw/375))
+        let bonus = UILabel(frame: CGRect(x: 22*sw/375, y: 625*sh/667, width: 50*sw/375, height: 16*sw/375))
         bonus.font = UIFont(name: "ArialRoundedMTBold", size: 14*fontSizeMultiplier)
+        bonus.textAlignment = .left
         if character != nil { bonus.text = "+1" + character! } else { bonus.text = "+1" }
         view.addSubview(bonus)
         UIView.animate(withDuration: 2.5) {
@@ -973,23 +980,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         
         for tile in allTiles {
-            if tile.isBuildable || tile.isStarterBlock {
+            if tile.isBuildable {
                 for tile2 in tilesInPlay {
                     if tile2.row! - 1 == tile.row! || tile2.row! + 1 == tile.row! || tile2.column! - 1 == tile.column! || tile2.column! + 1 == tile.column! { isWordBuildable = true }
                 }
             }
         }
-        
-        //        for tile in wordTiles {
-        //
-        //            if tile.isBuildable { isWordBuildable = true }
-        //
-        //        }
-        //        for tile in wordTilesPerpendicular {
-        //
-        //            if tile.isBuildable { isWordBuildable = true }
-        //
-        //        }
+
         guard isWordBuildable == true else {
             //          var isFirstPlayFunc = true
             let alert = UIAlertController(title: word.uppercased(), message: "Must build off black tiles", preferredStyle: UIAlertControllerStyle.alert)
@@ -1098,7 +1095,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 view.addSubview(tile)
                 allTiles.append(tile)
                 dropTileWhereItBelongs(tile: tile)
-                
             }
             if Set1.atBatRawValue.count < 7 {
                 refillMode = true
@@ -1234,8 +1230,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         } else {
             for i in 0..<Set1.indexBuildable.count {
                 let tile = Tile()
-                tile.isStarterBlock = false
-                
                 tile.mySymbol = whatsMySymbol(character: Set1.buildableRawValue[i])
                 tile.myWhereInPlay = .board
                 tile.isLockedInPlace = true
@@ -1323,7 +1317,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         
                         view.addSubview(newTile)
                         dropTileWhereItBelongs(tile: newTile)
-                        Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
+                       // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
                         LoadSaveCoreData.sharedInstance.saveState()
                     } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
                         once = false
@@ -1336,7 +1330,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         tile.topOfBlock.backgroundColor = .white
                         tile.text.textColor = .black
                         dropTileWhereItBelongs(tile: tile)
-                        Set1.atBatRawValue.append(tile.mySymbol.rawValue)
+                       // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
                         onDeckTiles.removeAll()
                         for tile in allTiles {
                             if tile.myWhereInPlay == .onDeck {
@@ -1348,16 +1342,21 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         delay(bySeconds: 0.1) { self.once = true }
                     }
                     //maybe fixes the color problem???
+                    var tileCount = 0
                     for tile in allTiles {
                         if tile.myWhereInPlay == .onDeck {
                             tile.topOfBlock.backgroundColor = myColor.black80
                             tile.text.textColor = .white
+                            tileCount += 1
+                            if tileCount == allTiles.count {
+                                once = true
+                            }
                         }
                     }
                 }
             }
         }
-        once = true
+        
         if banner.frame.contains(gesture.location(in: view)) {
             bannerFunc()
         }
@@ -1374,7 +1373,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             }
         }
         
-        if container.count + onTheBoard == 6 {refillMode = false}
+        if container.count + onTheBoard >= 6 {refillMode = false}
         o: for i in 0...6 {
             
             if !container.contains(i) {
@@ -1427,6 +1426,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             dropTileWhereItBelongs(tile: tile)
         }
         refreshSizes()
+        for tile in allTiles {
+            if tile.myWhereInPlay == .atBat {
+                print("ATBAT")
+            }
+        }
     }
     
     var iWantToScrollMyBoard = true
