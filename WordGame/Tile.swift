@@ -91,7 +91,7 @@ class Tile: UIView {
         topOfBlock.frame = CGRect(x: 0, y: 0, width: 0.96*self.bounds.width, height: 0.96*self.bounds.height)
         topOfBlock.layer.borderWidth = 1
         topOfBlock.layer.borderColor = UIColor.black.cgColor
-        topOfBlock.backgroundColor = .white
+        topOfBlock.backgroundColor = myColor.purple
         topOfBlock.layer.cornerRadius = self.bounds.width/10
         topOfBlock.layer.masksToBounds = true
         text.frame = CGRect(x: 0, y: 0, width: 0.96*self.bounds.width, height: 0.96*self.bounds.height)
@@ -107,6 +107,16 @@ class Tile: UIView {
         if isLockedInPlace && !isStarterBlock {
             topOfBlock.backgroundColor = myColor.black80
             text.textColor = .white
+        }
+        switch myWhereInPlay {
+        case .atBat:
+            self.layer.borderColor = UIColor.black.cgColor
+        case .onDeck:
+            self.layer.borderColor = UIColor.black.cgColor
+        case .board:
+            self.layer.borderColor = UIColor.clear.cgColor
+        default:
+            break
         }
         
     }

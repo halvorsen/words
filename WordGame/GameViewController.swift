@@ -32,10 +32,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         if refillMode {
             view.removeGestureRecognizer(pan)
             for tile in allTiles {
-                if tile.myWhereInPlay == .onDeck || tile.myWhereInPlay == .pile {
+                if tile.myWhereInPlay == .pile {
+                    tile.topOfBlock.backgroundColor = self.myColor.purple
+                    tile.text.textColor = .black
+                    tile.alpha = 1.0
+                }
+                if tile.myWhereInPlay == .onDeck {
                     tile.topOfBlock.backgroundColor = self.myColor.black80
                     tile.text.textColor = .white
                     tile.alpha = 1.0
+                }
+                if tile.myWhereInPlay == .atBat {
+                    tile.topOfBlock.backgroundColor = .white
                 }
             }
             pile.alpha = 1.0
@@ -45,10 +53,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             pile.alpha = onDeckAlpha
             for tile in allTiles {
                 delay(bySeconds: 0.5) {
-                    if tile.myWhereInPlay == .onDeck || tile.myWhereInPlay == .pile {
-                        tile.topOfBlock.backgroundColor = .white
+                    if tile.myWhereInPlay == .pile {
+                        tile.topOfBlock.backgroundColor = self.myColor.black80
                         tile.text.textColor = .black
                         tile.alpha = self.onDeckAlpha
+                    }
+                    if tile.myWhereInPlay == .onDeck {
+                        tile.topOfBlock.backgroundColor = self.myColor.purple
+                        tile.text.textColor = .black
+                        tile.alpha = self.onDeckAlpha
+                    }
+                    if tile.myWhereInPlay == .atBat {
+                        tile.topOfBlock.backgroundColor = self.myColor.purple
                     }
                 }
             }
@@ -1259,8 +1275,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 let slot = myBoard.slots[Set1.indexStart[i]]
                 tile.slotsIndex = Set1.indexStart[i]
                 tile.isLockedInPlace = true
-                tile.topOfBlock.backgroundColor = .white
-                tile.text.textColor = myColor.black80
+                tile.topOfBlock.backgroundColor = myColor.purple
+                tile.text.textColor = .black
                 slot.isOccupied = true
                 slot.isPermanentlyOccupied = true
                 tile.row = slot.row
@@ -1327,7 +1343,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         tile.myWhereInPlay = .atBat
                         tile.mySize = .large
                         
-                        tile.topOfBlock.backgroundColor = .white
+                        tile.topOfBlock.backgroundColor = myColor.purple
                         tile.text.textColor = .black
                         dropTileWhereItBelongs(tile: tile)
                        // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
@@ -1428,7 +1444,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         refreshSizes()
         for tile in allTiles {
             if tile.myWhereInPlay == .atBat {
-                print("ATBAT")
+        
             }
         }
     }
@@ -1671,7 +1687,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 y = scale*(0.5*sw/375 + CGFloat(row)*23*sw/375)
             }
             tile.frame.origin = CGPoint(x: x, y: y)
-            
+            tile.shadowOfBlock.alpha = 0.0
+            tile.topOfBlock.layer.borderColor = UIColor.clear.cgColor
+           // tile.topOfBlock.layer.borderWidth = 0
         case .atBat:
             let order = tile.atBatTileOrder!
             let x = 13*self.sw/375 + CGFloat(order)*50*self.sw/375
@@ -1679,7 +1697,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             UIView.animate(withDuration: 0.3) {
                 tile.frame.origin = CGPoint(x: x, y: y)
             }
-        case .pile: break
+            tile.shadowOfBlock.alpha = 0.0
+            tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
+        case .pile:
+            tile.shadowOfBlock.alpha = 1.0
+            tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
         case .trash: break
         case .onDeck:
             let amount = onDeckTiles.count
@@ -1910,6 +1932,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 default:
                     break
                 }
+                tile.shadowOfBlock.alpha = 1.0
+                tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
             default:
                 break
             }
@@ -1962,13 +1986,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             case .trash: break
             case .atBat:
                 tile.mySize = .large
-            case .pile: break
+                tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
+            case .pile:
+                tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
             case .onDeck:
                 tile.mySize = .medium
+                tile.topOfBlock.layer.borderColor = UIColor.black.cgColor
             case .board:
                 tile.mySize = .small
+                tile.topOfBlock.layer.borderColor = UIColor.clear.cgColor
                 if Set1.isZoomed {
                     tile.mySize = .large
+                    tile.topOfBlock.layer.borderColor = UIColor.clear.cgColor
                 }
             }
         }
@@ -2006,12 +2035,12 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         myLoad()
         for tile in allTiles {
             if tile.isStarterBlock {
-                tile.topOfBlock.backgroundColor = .white
-                tile.text.textColor = myColor.black80
+                tile.topOfBlock.backgroundColor = myColor.purple
+                tile.text.textColor = .black
             }
         }
-        pile.topOfBlock.backgroundColor = .white
-        pile.text.textColor = myColor.black80
+        pile.topOfBlock.backgroundColor = myColor.black80
+        pile.text.textColor = .black
         startingNewGame = false
         storeWholeState()
         LoadSaveCoreData.sharedInstance.saveState()

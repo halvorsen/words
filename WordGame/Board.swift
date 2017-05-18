@@ -41,7 +41,7 @@ class Board: UIScrollView {
                 slot2.layer.cornerRadius = slot.frame.width*3/22
                 slots2.append(slot2)
                 count += 1
-                v.addSubview(slot)
+              //  v.addSubview(slot)
                 v.addSubview(slot2)
             }
         }
