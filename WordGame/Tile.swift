@@ -33,7 +33,7 @@ class Tile: UIView {
     
     var isLockedInPlace = Bool() {didSet{
         if isLockedInPlace && !isStarterBlock {
-            topOfBlock.backgroundColor = myColor.black80
+            topOfBlock.backgroundColor = myColor.teal
             text.textColor = .white
         }
         }
@@ -105,7 +105,7 @@ class Tile: UIView {
         shadowOfBlock.layer.cornerRadius = self.bounds.width/10
         shadowOfBlock.layer.masksToBounds = true
         if isLockedInPlace && !isStarterBlock {
-            topOfBlock.backgroundColor = myColor.black80
+            topOfBlock.backgroundColor = myColor.teal
             text.textColor = .white
         }
         switch myWhereInPlay {

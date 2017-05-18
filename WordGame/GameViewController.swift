@@ -27,7 +27,15 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var isNotSameTile = false
     let onDeckAlpha: CGFloat = 0.1
     var playButton = UIButton()
-    var amountOfBoosts = Int() { didSet { LoadSaveCoreData.sharedInstance.saveBoost(amount: amountOfBoosts); boostIndicator.text = String(amountOfBoosts) }}
+    var amountOfBoosts = Int() { didSet { LoadSaveCoreData.sharedInstance.saveBoost(amount: amountOfBoosts);
+        
+        if amountOfBoosts > 9 {
+        boostIndicator.text = String(amountOfBoosts)
+        } else {
+            boostIndicator.text = "0" + String(amountOfBoosts)
+        }
+        
+        }}
     var refillMode = false {didSet{
         if refillMode {
             view.removeGestureRecognizer(pan)
@@ -38,7 +46,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     tile.alpha = 1.0
                 }
                 if tile.myWhereInPlay == .onDeck {
-                    tile.topOfBlock.backgroundColor = self.myColor.black80
+                    tile.topOfBlock.backgroundColor = self.myColor.teal
                     tile.text.textColor = .white
                     tile.alpha = 1.0
                 }
@@ -54,7 +62,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             for tile in allTiles {
                 delay(bySeconds: 0.5) {
                     if tile.myWhereInPlay == .pile {
-                        tile.topOfBlock.backgroundColor = self.myColor.black80
+                        tile.topOfBlock.backgroundColor = self.myColor.teal
                         tile.text.textColor = .black
                         tile.alpha = self.onDeckAlpha
                     }
@@ -101,11 +109,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
         let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
         let menuButton = UIButton()
-        menuButton.frame = CGRect(x: 0, y: 0, width: 75*sw/375, height: 75*sw/375)
+        menuButton.frame = CGRect(x: 0, y: 0, width: 64*sw/375, height: 64*sw/375)
         menuButton.setImage(#imageLiteral(resourceName: "menu"), for: .normal)
         menuButton.addTarget(self, action: #selector(GameViewController.menuFunc(_:)), for: .touchUpInside)
         view.addSubview(menuButton)
-        trash.frame = CGRect(x: 309*sw/375, y: 567*sh/667, width: 66*sw/375, height: 116*sw/375)
+        trash.frame = CGRect(x: 309*sw/375, y: 567*sh/667, width: 66*sw/375, height: 100*sh/667)
         trash.image = #imageLiteral(resourceName: "trash")
         view.addSubview(trash)
         view.backgroundColor = myColor.white245
@@ -115,7 +123,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         tap = UITapGestureRecognizer(target: self, action: #selector(GameViewController.tapTile(_:)))
         view.addGestureRecognizer(tap)
         pile.text.font = UIFont(name: "HelveticaNeue-Bold", size: 14*fontSizeMultiplier)
-        pile.frame = CGRect(x: 15*sw/375, y: 616*sh/667, width: 34*sw/375, height: 34*sw/375)
+        pile.frame = CGRect(x: 13*sw/375, y: 616*sh/667, width: 34*sw/375, height: 34*sw/375)
         pile.myWhereInPlay = .pile
         view.addSubview(pile)
         pile.text.text = pileOfTilesString
@@ -128,9 +136,12 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         startGameWithTilesOnBoard(difficulty: .hard)
         //  moveButton()
         
-        playButton.frame = CGRect(x: 0, y: 80*sh/667, width: sw, height: 29*sw/375)
+        playButton.frame = CGRect(x: sw/4, y: 65*sh/667, width: sw/2, height: 29*sh/667)
+     //   playButton.titleLabel?.font = UIFont(name: "", size: 60*fontSizeMultiplier)
+        playButton.setImage(#imageLiteral(resourceName: "play"),for: .normal)
+       // playButton.layer.borderWidth = 1
         playButton.backgroundColor = myColor.white245
-        playButton.setTitle("\u{25B6}", for: .normal)
+      //  playButton.setTitle("\u{25B6}", for: .normal)
         playButton.addTarget(self, action: #selector(GameViewController.playFunc(_:)), for: .touchUpInside)
         playButton.setTitleColor(myColor.purple, for: .normal)
         view.addSubview(playButton)
@@ -158,15 +169,19 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
         banner.image = #imageLiteral(resourceName: "rocket")
         banner.frame = CGRect(x: 276*sw/375, y: 0, width: 99*sw/375, height: 70*sw/375)
-        banner.alpha = 0.5
+        banner.alpha = 1.0
         view.addSubview(banner)
         
-        boostIndicator = UILabel(frame: CGRect(x: 346*sw/375, y: 0, width: 14*sw/375, height: 11*sw/375))
-        boostIndicator.text = String(amountOfBoosts)
-        boostIndicator.font = UIFont(name: "ArialRoundedMTBold", size: 9*fontSizeMultiplier)
-        boostIndicator.textColor = UIColor(displayP3Red: 209/255, green: 72/255, blue: 72/255, alpha: 1.0)
-        boostIndicator.textAlignment = .center
-        boostIndicator.alpha = 0.5
+        boostIndicator = UILabel(frame: CGRect(x: 290*sw/375, y: 25*sh/667, width: 30*sw/375, height: 25*sw/667))
+        if amountOfBoosts < 10 {
+        boostIndicator.text = "0" + String(amountOfBoosts)
+        } else {
+            boostIndicator.text = String(amountOfBoosts)
+        }
+        boostIndicator.font = UIFont(name: "Helvetica-Bold", size: 19*fontSizeMultiplier)
+        boostIndicator.textColor = myColor.teal
+        boostIndicator.textAlignment = .left
+     
         view.addSubview(boostIndicator)
         
         
@@ -488,7 +503,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             self.wordTiles[i].isLockedInPlace = true
                             if self.wordTiles[i].isStarterBlock {
                                 self.wordTiles[i].isStarterBlock = false
-                                self.wordTiles[i].topOfBlock.backgroundColor = self.myColor.black80
+                                self.wordTiles[i].topOfBlock.backgroundColor = self.myColor.teal
                                 self.wordTiles[i].text.textColor = .white
                                 
                             }
@@ -591,18 +606,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func alreadyWinSequence() {
-        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
-        win.text = "WIN!"
-        win.textAlignment = .center
-        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
-        view.addSubview(win)
+//        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
+//        win.text = "WIN!"
+//        win.textAlignment = .center
+//        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
+//        view.addSubview(win)
         
         for i in 0...2 {
             delay(bySeconds: 1.0*Double(i)) {
                 for tile in self.allTiles {
                     tile.topOfBlock.backgroundColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                     tile.text.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
-                    win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
+            //        win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                 }
             }
         }
@@ -655,7 +670,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 tile.mySymbol = self.pickRandomLetter()
                 tile.onDeckTileOrder = self.onDeckTiles.count - 1
                 tile.myWhereInPlay = .onDeck
-                tile.topOfBlock.backgroundColor = self.myColor.black80
+                tile.topOfBlock.backgroundColor = self.myColor.teal
                 tile.text.textColor = .white
                 self.view.addSubview(tile)
                 self.allTiles.append(tile)
@@ -680,7 +695,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         tile.mySymbol = self.pickRandomLetter()
                         tile.onDeckTileOrder = self.onDeckTiles.count - 1
                         tile.myWhereInPlay = .onDeck
-                        tile.topOfBlock.backgroundColor = self.myColor.black80
+                        tile.topOfBlock.backgroundColor = self.myColor.teal
                         tile.text.textColor = .white
                         self.view.addSubview(tile)
                         self.allTiles.append(tile)
@@ -741,7 +756,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     tile.mySymbol = self.pickRandomLetter()
                     tile.onDeckTileOrder = self.onDeckTiles.count - 1
                     tile.myWhereInPlay = .onDeck
-                    tile.topOfBlock.backgroundColor = self.myColor.black80
+                    tile.topOfBlock.backgroundColor = self.myColor.teal
                     tile.text.textColor = .white
                     self.view.addSubview(tile)
                     self.allTiles.append(tile)
@@ -1362,7 +1377,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     var tileCount = 0
                     for tile in allTiles {
                         if tile.myWhereInPlay == .onDeck {
-                            tile.topOfBlock.backgroundColor = myColor.black80
+                            tile.topOfBlock.backgroundColor = myColor.teal
                             tile.text.textColor = .white
                             tileCount += 1
                             if tileCount == allTiles.count {
@@ -1686,7 +1701,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         case .atBat:
             let order = tile.atBatTileOrder!
             let x = 13*self.sw/375 + CGFloat(order)*50*self.sw/375
-            let y = 13*self.sh/667 + myBoard.frame.maxY
+            let y = 29*self.sh/667 + myBoard.frame.maxY
             UIView.animate(withDuration: 0.3) {
                 tile.frame.origin = CGPoint(x: x, y: y)
             }
@@ -2032,7 +2047,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 tile.text.textColor = .black
             }
         }
-        pile.topOfBlock.backgroundColor = myColor.black80
+        pile.topOfBlock.backgroundColor = myColor.teal
         pile.text.textColor = .black
         startingNewGame = false
         storeWholeState()

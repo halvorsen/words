@@ -21,6 +21,7 @@
 		0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81E1EAD3CC00083A4A2 /* Slot.swift */; };
 		06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A454061EB65390007F3F71 /* TutorialViewController.swift */; };
 		06C25AE21EB81D670057DBFE /* LoadSaveCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */; };
+		B2D368942279922292AF58F0 /* Pods_WordGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,9 @@
 		0644A81E1EAD3CC00083A4A2 /* Slot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		06A454061EB65390007F3F71 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadSaveCoreData.swift; sourceTree = "<group>"; };
+		7045E0D0C946B88F494862AF /* Pods-WordGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordGame.release.xcconfig"; path = "Pods/Target Support Files/Pods-WordGame/Pods-WordGame.release.xcconfig"; sourceTree = "<group>"; };
+		B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WordGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0B5207B00F4D246C1C0EAC4 /* Pods-WordGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WordGame/Pods-WordGame.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,18 +53,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				0625A52A1EAABA700064E97B /* StoreKit.framework in Frameworks */,
+				B2D368942279922292AF58F0 /* Pods_WordGame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0147DB24A17FD8F9F217815E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E0B5207B00F4D246C1C0EAC4 /* Pods-WordGame.debug.xcconfig */,
+				7045E0D0C946B88F494862AF /* Pods-WordGame.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		0625A5051EAAB9C20064E97B = {
 			isa = PBXGroup;
 			children = (
 				0625A5101EAAB9C20064E97B /* WordGame */,
 				0625A50F1EAAB9C20064E97B /* Products */,
 				0625A5261EAABA5C0064E97B /* Frameworks */,
+				0147DB24A17FD8F9F217815E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				0625A5291EAABA700064E97B /* StoreKit.framework */,
+				B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -109,9 +125,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0625A5231EAAB9C20064E97B /* Build configuration list for PBXNativeTarget "WordGame" */;
 			buildPhases = (
+				701D51AF659851230D5E39C1 /* [CP] Check Pods Manifest.lock */,
 				0625A50A1EAAB9C20064E97B /* Sources */,
 				0625A50B1EAAB9C20064E97B /* Frameworks */,
 				0625A50C1EAAB9C20064E97B /* Resources */,
+				98301E6769D1623278B49982 /* [CP] Embed Pods Frameworks */,
+				FFFAC9279F035E37AD58C448 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -180,6 +199,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		701D51AF659851230D5E39C1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		98301E6769D1623278B49982 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WordGame/Pods-WordGame-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FFFAC9279F035E37AD58C448 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WordGame/Pods-WordGame-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0625A50A1EAAB9C20064E97B /* Sources */ = {
@@ -316,13 +383,14 @@
 		};
 		0625A5241EAAB9C20064E97B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E0B5207B00F4D246C1C0EAC4 /* Pods-WordGame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEVELOPMENT_TEAM = PFDY3PS57G;
 				INFOPLIST_FILE = WordGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.halvorsen.WordGame;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rightBrothers.wordsWithNoFriends;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -330,13 +398,14 @@
 		};
 		0625A5251EAAB9C20064E97B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7045E0D0C946B88F494862AF /* Pods-WordGame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				DEVELOPMENT_TEAM = PFDY3PS57G;
 				INFOPLIST_FILE = WordGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.halvorsen.WordGame;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rightBrothers.wordsWithNoFriends;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
