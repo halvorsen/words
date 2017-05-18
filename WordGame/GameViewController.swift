@@ -105,7 +105,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         menuButton.setImage(#imageLiteral(resourceName: "menu"), for: .normal)
         menuButton.addTarget(self, action: #selector(GameViewController.menuFunc(_:)), for: .touchUpInside)
         view.addSubview(menuButton)
-        trash.frame = CGRect(x: 309*sw/375, y: 551*sh/667, width: 66*sw/375, height: 116*sw/375)
+        trash.frame = CGRect(x: 309*sw/375, y: 567*sh/667, width: 66*sw/375, height: 116*sw/375)
         trash.image = #imageLiteral(resourceName: "trash")
         view.addSubview(trash)
         view.backgroundColor = myColor.white245
@@ -126,13 +126,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         addTilesToBoard()
         startGameWithTilesOnBoard(difficulty: .hard)
-        moveButton()
+        //  moveButton()
         
-        playButton.frame = CGRect(x: 15*sw/375, y: 425*sh/667, width: 49*sw/375, height: 37*sw/375)
+        playButton.frame = CGRect(x: 0, y: 80*sh/667, width: sw, height: 29*sw/375)
         playButton.backgroundColor = myColor.white245
         playButton.setTitle("\u{25B6}", for: .normal)
         playButton.addTarget(self, action: #selector(GameViewController.playFunc(_:)), for: .touchUpInside)
-        playButton.setTitleColor(.black, for: .normal)
+        playButton.setTitleColor(myColor.purple, for: .normal)
+        view.addSubview(playButton)
         
         myBoard.delegate = self
         self.myBoard.showsHorizontalScrollIndicator = false
@@ -155,8 +156,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             
         }
         
-        banner.image = #imageLiteral(resourceName: "Banner")
-        banner.frame = CGRect(x: 309*sw/375, y: 0, width: 66*sw/375, height: 66*sw/375)
+        banner.image = #imageLiteral(resourceName: "rocket")
+        banner.frame = CGRect(x: 276*sw/375, y: 0, width: 99*sw/375, height: 70*sw/375)
         banner.alpha = 0.5
         view.addSubview(banner)
         
@@ -569,18 +570,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     private func winSequence() {
         Set1.wins += 1
         Set1.winState = true
-//        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
-//        win.text = "WIN!"
-//        win.textAlignment = .center
-//        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
-//        view.addSubview(win)
+        //        let win = UILabel(frame: CGRect(x: 0, y: 34*sw/375, width: sw, height: 34*sw/375))
+        //        win.text = "WIN!"
+        //        win.textAlignment = .center
+        //        win.font = UIFont(name: "HelveticaNeue-Bold", size: 36*fontSizeMultiplier)
+        //        view.addSubview(win)
         
         for i in 0...10 {
             delay(bySeconds: 1.0*Double(i)) {
                 for tile in self.allTiles {
                     tile.topOfBlock.backgroundColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                     tile.text.textColor = .black
-              //      win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
+                    //      win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                 }
             }
         }
@@ -700,7 +701,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func longWordBonus(length: Int) {
-    
+        
         var pileBonus = 0
         var flippedBonus = 0
         switch length {
@@ -1002,7 +1003,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
             }
         }
-
+        
         guard isWordBuildable == true else {
             //          var isFirstPlayFunc = true
             let alert = UIAlertController(title: word.uppercased(), message: "Must build off black tiles", preferredStyle: UIAlertControllerStyle.alert)
@@ -1333,7 +1334,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         
                         view.addSubview(newTile)
                         dropTileWhereItBelongs(tile: newTile)
-                       // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
+                        // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
                         LoadSaveCoreData.sharedInstance.saveState()
                     } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
                         once = false
@@ -1346,7 +1347,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         tile.topOfBlock.backgroundColor = myColor.purple
                         tile.text.textColor = .black
                         dropTileWhereItBelongs(tile: tile)
-                       // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
+                        // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
                         onDeckTiles.removeAll()
                         for tile in allTiles {
                             if tile.myWhereInPlay == .onDeck {
@@ -1444,7 +1445,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         refreshSizes()
         for tile in allTiles {
             if tile.myWhereInPlay == .atBat {
-        
+                
             }
         }
     }
@@ -1599,15 +1600,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         movingTile?.slotsIndex = ct
                         movingTile?.myWhereInPlay = .board
                         movingTile?.atBatTileOrder = nil
-                        moveButton()
+                        //  moveButton()
                         movingTile?.row = slotView.row
                         movingTile?.column = slotView.column
                         if Set1.isZoomed == false {
                             myBoard.zoomIn() { () -> Void in
-                                if !playButton.isDescendant(of: view) {
-                                    view.addSubview(playButton)
-                                }
-                                moveButton()
+                                
+                                // moveButton()
                                 myBoard.contentOffset.x = slotView.frame.origin.x - myBoard.bounds.width/2 + slotView.frame.width/2
                                 if myBoard.contentOffset.x < 0 {
                                     myBoard.contentOffset.x = 0
@@ -1654,24 +1653,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
         
     }
-    private func moveButton() {
-        guard myBoard.slots.count > 0 else {return}
-        if myBoard.slots[14].isOccupied || myBoard.slots[29].isOccupied || myBoard.slots[13].isOccupied || myBoard.slots[28].isOccupied {
-            
-            self.playButton.frame.origin = CGPoint(x: 312*self.sw/375, y: 425*self.sh/667)
-            
-            
-            
-            
-            if myBoard.slots[224].isOccupied || myBoard.slots[223].isOccupied || myBoard.slots[209].isOccupied || myBoard.slots[208].isOccupied {
-                UIView.animate(withDuration: 0.5) {
-                    self.playButton.frame.origin = CGPoint(x: 164*self.sw/375, y: 72*self.sh/667) }
-                playButton.layer.borderColor = UIColor.black.cgColor
-                playButton.layer.borderWidth = 1
-            }
-        }
-    }
-    
+    //    private func moveButton() {
+    //        guard myBoard.slots.count > 0 else {return}
+    //        if myBoard.slots[14].isOccupied || myBoard.slots[29].isOccupied || myBoard.slots[13].isOccupied || myBoard.slots[28].isOccupied {
+    //
+    //            // self.playButton.frame.origin = CGPoint(x: 312*self.sw/375, y: 425*self.sh/667)
+    //
+    //
+    //
+    //
+    //
+    //        }
+    //
     func dropTileWhereItBelongs(tile: Tile) {
         switch tile.myWhereInPlay {
         case .board:
@@ -1689,7 +1682,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             tile.frame.origin = CGPoint(x: x, y: y)
             tile.shadowOfBlock.alpha = 0.0
             tile.topOfBlock.layer.borderColor = UIColor.clear.cgColor
-           // tile.topOfBlock.layer.borderWidth = 0
+        // tile.topOfBlock.layer.borderWidth = 0
         case .atBat:
             let order = tile.atBatTileOrder!
             let x = 13*self.sw/375 + CGFloat(order)*50*self.sw/375
@@ -2017,7 +2010,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         for case let view as Tile in myBoard.subviews {
             view.removeFromSuperview()
         }
-
+        
         isFirstPlayFunc = true
         
         allTiles.removeAll()
