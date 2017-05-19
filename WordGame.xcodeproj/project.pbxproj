@@ -19,6 +19,7 @@
 		0625A52F1EABA4880064E97B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625A52E1EABA4880064E97B /* Extensions.swift */; };
 		0644A81D1EABBA890083A4A2 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81C1EABBA890083A4A2 /* Board.swift */; };
 		0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0644A81E1EAD3CC00083A4A2 /* Slot.swift */; };
+		067C68AE1ECE550800CD1730 /* GameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067C68AD1ECE550800CD1730 /* GameCenter.swift */; };
 		06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A454061EB65390007F3F71 /* TutorialViewController.swift */; };
 		06C25AE21EB81D670057DBFE /* LoadSaveCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */; };
 		B2D368942279922292AF58F0 /* Pods_WordGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */; };
@@ -40,6 +41,7 @@
 		0625A52E1EABA4880064E97B /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0644A81C1EABBA890083A4A2 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		0644A81E1EAD3CC00083A4A2 /* Slot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
+		067C68AD1ECE550800CD1730 /* GameCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCenter.swift; sourceTree = "<group>"; };
 		06A454061EB65390007F3F71 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadSaveCoreData.swift; sourceTree = "<group>"; };
 		7045E0D0C946B88F494862AF /* Pods-WordGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordGame.release.xcconfig"; path = "Pods/Target Support Files/Pods-WordGame/Pods-WordGame.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				0625A5111EAAB9C20064E97B /* AppDelegate.swift */,
 				0625A5131EAAB9C20064E97B /* GameViewController.swift */,
 				06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */,
+				067C68AD1ECE550800CD1730 /* GameCenter.swift */,
 				0644A81E1EAD3CC00083A4A2 /* Slot.swift */,
 				0644A81C1EABBA890083A4A2 /* Board.swift */,
 				0625A52C1EAABB460064E97B /* Tile.swift */,
@@ -258,6 +261,7 @@
 				0625A5141EAAB9C20064E97B /* GameViewController.swift in Sources */,
 				06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */,
 				0644A81D1EABBA890083A4A2 /* Board.swift in Sources */,
+				067C68AE1ECE550800CD1730 /* GameCenter.swift in Sources */,
 				0644A81F1EAD3CC00083A4A2 /* Slot.swift in Sources */,
 				0625A51A1EAAB9C20064E97B /* WordGame.xcdatamodeld in Sources */,
 				0625A5121EAAB9C20064E97B /* AppDelegate.swift in Sources */,

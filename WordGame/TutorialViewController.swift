@@ -13,6 +13,7 @@ class TutorialViewController: UIViewController {
     let slide2 = UIImageView()
     let slide3 = UIImageView()
     let slide4 = UIImageView()
+    let myColor = CustomColor()
     
     var viewOnScreen = UIImageView()
     
@@ -20,7 +21,7 @@ class TutorialViewController: UIViewController {
         super.viewDidLoad()
         let pan = UIPanGestureRecognizer(target: self, action: #selector(TutorialViewController.swipeFunc(_:)))
         view.addGestureRecognizer(pan)
-        view.backgroundColor = UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0.8)
+        view.backgroundColor = myColor.white238//UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0.8)
         viewOnScreen = slide1
         setupSlide1()
         setupSlide2()

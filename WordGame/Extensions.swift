@@ -44,8 +44,10 @@ extension UIViewController {
 struct CustomColor {
     let white245 = UIColor(colorLiteralRed: 255/255, green: 255/255, blue: 255/255, alpha: 1.0)
     let white234 = UIColor(colorLiteralRed: 227/255, green: 227/255, blue: 227/255, alpha: 1.0)
+    let white238 = UIColor(colorLiteralRed: 238/255, green: 238/255, blue: 238/255, alpha: 1.0)
     let teal = UIColor(colorLiteralRed: 112/255, green: 194/255, blue: 206/255, alpha: 1.0)
     let purple = UIColor(colorLiteralRed: 176/255, green: 137/255, blue: 231/255, alpha: 1.0)
+    let white180 = UIColor(colorLiteralRed: 180/255, green: 180/255, blue: 180/255, alpha: 1.0)
 }
 
 public struct Set1 {

@@ -599,6 +599,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     //      win.textColor = UIColor(colorLiteralRed: Float(drand48()), green: Float(drand48()), blue: Float(drand48()), alpha: 1.0)
                 }
             }
+            
+            
         }
         view.removeGestureRecognizer(tap)
         view.removeGestureRecognizer(pan)
@@ -1021,7 +1023,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
         guard isWordBuildable == true else {
             //          var isFirstPlayFunc = true
-            let alert = UIAlertController(title: word.uppercased(), message: "Must build off black tiles", preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: word.uppercased(), message: "Must build off teal tiles", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return nil

@@ -93,8 +93,7 @@ class LoadSaveCoreData {
     }
     
     func saveState() {
-        print("savestate")
-        print(Set1.atBatRawValue)
+        GameCenter.shared.addDataToGameCenter(wins: Set1.wins)
         let appDel = UIApplication.shared.delegate as! AppDelegate
         let context = appDel.persistentContainer.viewContext
         
