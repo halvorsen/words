@@ -193,7 +193,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     var myMenu = MenuViewController()
     override func viewWillAppear(_ animated: Bool) {
-        
         doubleTap.numberOfTapsRequired = 2
         let a = LoadSaveCoreData.sharedInstance.loadBoost()
         if a != nil {

@@ -21,7 +21,7 @@ class MenuViewController: UIViewController {
     var newGame = false
     
     override func viewWillAppear(_ animated: Bool) {
-
+        
         
     }
     
