@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import GCHelper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         LoadSaveCoreData.sharedInstance.loadWinLoses()
+        if UserDefaults.standard.bool(forKey: "launchedBefore") {
+        GCHelper.sharedInstance.authenticateLocalUser()
+        }
         // Override point for customization after application launch.
         return true
     }

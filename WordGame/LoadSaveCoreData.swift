@@ -125,7 +125,7 @@ class LoadSaveCoreData {
     }
     
     func loadState() {
-print("entered load")
+
         var resultsSave = [AnyObject]()
         let appDel = (UIApplication.shared.delegate as! AppDelegate)
         let context = appDel.persistentContainer.viewContext
@@ -136,7 +136,7 @@ print("entered load")
             print("Could not cache the response \(error)")
         }
         
-        print(resultsSave)
+        
         if resultsSave.last != nil {
             Set1.winState = (resultsSave.last!.value(forKeyPath: "isWinMode") as? Bool)!
             Set1.atBatRawValue = (resultsSave.last!.value(forKeyPath: "atBatRawValue") as? [String])!
@@ -146,8 +146,7 @@ print("entered load")
             Set1.startRawValue = (resultsSave.last!.value(forKeyPath: "startRawValue") as? [String])!
             Set1.indexStart = (resultsSave.last!.value(forKeyPath: "indexStart") as? [Int])!
             Set1.pileAmount = (resultsSave.last!.value(forKeyPath: "pileAmount") as? Int)!
-            print(Set1.winState)
-            print(Set1.atBatRawValue)
+            
         }
 
     }

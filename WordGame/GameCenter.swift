@@ -18,10 +18,7 @@ struct GameCenter {
         
         
     }
-    
-    func auth() {
-        GCHelper.sharedInstance.authenticateLocalUser()
-    }
+   
     
     
     
