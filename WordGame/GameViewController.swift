@@ -15,6 +15,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     let myColor = CustomColor()
     let myBoard = Board.sharedInstance
     var pan = UIPanGestureRecognizer()
+    var pan2 = UIPanGestureRecognizer()
     var tap = UITapGestureRecognizer()
     var doubleTap = UITapGestureRecognizer()
     var allTiles = [Tile]()
@@ -39,7 +40,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }}
     var refillMode = false {didSet{
         if refillMode {
-            // view.removeGestureRecognizer(pan)
+            view.removeGestureRecognizer(pan)
+            view.addGestureRecognizer(pan2)
+            print("addPan2A")
             for tile in allTiles {
                 if tile.myWhereInPlay == .pile {
                     tile.topOfBlock.backgroundColor = self.myColor.purple
@@ -58,7 +61,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             pile.alpha = 1.0
             
         } else {
-            // view.addGestureRecognizer(pan)
+            view.addGestureRecognizer(pan)
+            view.removeGestureRecognizer(pan2)
+            print("addPan1B")
             pile.alpha = onDeckAlpha
             for tile in allTiles {
                 delay(bySeconds: 0.5) {
@@ -99,14 +104,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        isFirstLoading = !UserDefaults.standard.bool(forKey: "launchedBefore")
+        isFirstLoading = !UserDefaults.standard.bool(forKey: "launchedWordGameBefore")
         myLoad()
         storeWholeState()
         LoadSaveCoreData.sharedInstance.saveState()
     }
     private func myLoad() {
         
-        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedWordGameBefore")
         let menuButton = UIButton()
         menuButton.frame = CGRect(x: 0, y: 0, width: 64*sw/375, height: 64*sw/375)
         menuButton.setImage(#imageLiteral(resourceName: "menu"), for: .normal)
@@ -119,6 +124,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         view.addSubview(myBoard)
         pan = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.moveTile(_:)))
         view.addGestureRecognizer(pan)
+        print("addPan1A")
+        pan2 = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.moveTile2(_:)))
+        
         tap = UITapGestureRecognizer(target: self, action: #selector(GameViewController.tapTile(_:)))
         view.addGestureRecognizer(tap)
         pile.text.font = UIFont(name: "HelveticaNeue-Bold", size: 14*fontSizeMultiplier)
@@ -156,7 +164,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 
             } else {
                 self.performSegue(withIdentifier: "fromGameToTutorial", sender: self)
-                UserDefaults.standard.set(true, forKey: "launchedBefore")
+                UserDefaults.standard.set(true, forKey: "launchedWordGameBefore")
             }
             
         }
@@ -614,7 +622,9 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             
             
         }
+        print("Remove Gestrures at win seq")
         view.removeGestureRecognizer(tap)
+        view.removeGestureRecognizer(pan2)
         view.removeGestureRecognizer(pan)
         view.removeGestureRecognizer(doubleTap)
     }
@@ -630,8 +640,10 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
             }
         }
+        print("Remove Gestrures at already win seq")
         view.removeGestureRecognizer(tap)
         view.removeGestureRecognizer(pan)
+        view.removeGestureRecognizer(pan2)
         view.removeGestureRecognizer(doubleTap)
     }
     
@@ -1503,71 +1515,78 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     var iWantToScrollMyBoard = true
-    @objc private func moveTile(_ gesture: UIPanGestureRecognizer) {
+    
+    @objc private func moveTile2(_ gesture: UIPanGestureRecognizer) {
         
         switch gesture.state {
         case .began:
-            
-            if refillMode {
-                once = true
-                for tile in allTiles {
-                    if tile.frame.contains(gesture.location(in: view)) && (tile.myWhereInPlay == .onDeck || tile == pile) {
-                        if tile.frame.contains(gesture.location(in: view)) && tile == pile && once {
-                            once = false
-                            pileOfTiles -= 1
-                            let newTile = Tile()
-                            newTile.mySymbol = pickRandomLetter()
-                            allTiles.append(newTile)
-                            newTile.myWhereInPlay = .atBat
-                            newTile.mySize = .large
-                            
-                            newTile.atBatTileOrder = seatWarmerFunc()
-                            
-                            view.addSubview(newTile)
-                            dropTileWhereItBelongs(tile: newTile)
-                            // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
-                            LoadSaveCoreData.sharedInstance.saveState()
-                        } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
-                            once = false
-                            
-                            
-                            tile.atBatTileOrder = seatWarmerFunc()
-                            tile.myWhereInPlay = .atBat
-                            tile.mySize = .large
-                            
-                            tile.topOfBlock.backgroundColor = myColor.purple
-                            tile.text.textColor = .black
-                            dropTileWhereItBelongs(tile: tile)
-                            // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
-                            onDeckTiles.removeAll()
-                            for tile in allTiles {
-                                if tile.myWhereInPlay == .onDeck {
-                                    onDeckTiles.append(tile)
-                                }
-                            }
-                            rearrangeOnDeck(gone: tile.onDeckTileOrder!)
-                        } else {
-                            delay(bySeconds: 0.1) { self.once = true }
-                        }
-                        //maybe fixes the color problem???
-                        var tileCount = 0
+            once = true
+            for tile in allTiles {
+                if tile.frame.contains(gesture.location(in: view)) && (tile.myWhereInPlay == .onDeck || tile == pile) {
+                    if tile.frame.contains(gesture.location(in: view)) && tile == pile && once {
+                        once = false
+                        pileOfTiles -= 1
+                        let newTile = Tile()
+                        newTile.mySymbol = pickRandomLetter()
+                        allTiles.append(newTile)
+                        newTile.myWhereInPlay = .atBat
+                        newTile.mySize = .large
+                        
+                        newTile.atBatTileOrder = seatWarmerFunc()
+                        
+                        view.addSubview(newTile)
+                        dropTileWhereItBelongs(tile: newTile)
+                        // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
+                        LoadSaveCoreData.sharedInstance.saveState()
+                    } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
+                        once = false
+                        
+                        
+                        tile.atBatTileOrder = seatWarmerFunc()
+                        tile.myWhereInPlay = .atBat
+                        tile.mySize = .large
+                        
+                        tile.topOfBlock.backgroundColor = myColor.purple
+                        tile.text.textColor = .black
+                        dropTileWhereItBelongs(tile: tile)
+                        // Set1.atBatRawValue.append(tile.mySymbol.rawValue)
+                        onDeckTiles.removeAll()
                         for tile in allTiles {
                             if tile.myWhereInPlay == .onDeck {
-                                tile.topOfBlock.backgroundColor = myColor.teal
-                                tile.text.textColor = .white
-                                tileCount += 1
-                                if tileCount == allTiles.count {
-                                    once = true
-                                }
+                                onDeckTiles.append(tile)
+                            }
+                        }
+                        rearrangeOnDeck(gone: tile.onDeckTileOrder!)
+                    } else {
+                        delay(bySeconds: 0.1) { self.once = true }
+                    }
+                    //maybe fixes the color problem???
+                    var tileCount = 0
+                    for tile in allTiles {
+                        if tile.myWhereInPlay == .onDeck {
+                            tile.topOfBlock.backgroundColor = myColor.teal
+                            tile.text.textColor = .white
+                            tileCount += 1
+                            if tileCount == allTiles.count {
+                                once = true
                             }
                         }
                     }
                 }
-                
-                
             }
-            guard refillMode == false else {return}
-            for tile in allTiles {
+            
+            
+        default: break
+        }
+    }
+    
+    
+    @objc private func moveTile(_ gesture: UIPanGestureRecognizer) {
+        print("MoveTile")
+        switch gesture.state {
+        case .began:
+            print("BEGAN")
+            outer: for tile in allTiles {
                 if !myBoard.frame.contains(gesture.location(in: view)) {
                     iWantToScrollMyBoard = false
                     if tile.frame.contains(gesture.location(in: view)) && !tile.isLockedInPlace && tile.myWhereInPlay == .atBat {
@@ -1580,6 +1599,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             myBoard.slots[(movingTile?.slotsIndex!)!].isOccupied = false
                         }
                     }
+                    break outer
                 } else {
                     if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board {
                         
@@ -1590,12 +1610,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         if movingTile?.slotsIndex != nil {
                             myBoard.slots[(movingTile?.slotsIndex!)!].isOccupied = false
                         }
+                        break outer
                     }
                 }
             }
             
         case .changed:
-            guard refillMode == false else {return}
+            print("Changed")
             if iWantToScrollMyBoard && Set1.isZoomed {
                 
                 let translation = gesture.translation(in: view)
@@ -1677,8 +1698,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 reOrderAtBat()
             }
         case .ended:
-            guard refillMode == false else {return}
-            iWantToScrollMyBoard = true
+           print("ended")
+           iWantToScrollMyBoard = true
             if trash.frame.contains(gesture.location(in: view)) && movingTile != nil {
                 if playButton.isDescendant(of: view) {
                     
@@ -2110,7 +2131,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer is UIPanGestureRecognizer || gestureRecognizer is UITapGestureRecognizer {
+        if (gestureRecognizer is UIPanGestureRecognizer || gestureRecognizer is UITapGestureRecognizer) && !refillMode {
             return true
         } else {
             return false
