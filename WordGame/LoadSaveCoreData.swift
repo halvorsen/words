@@ -103,7 +103,7 @@ class LoadSaveCoreData {
         catch { print(error) }
         
         let entityGameState = NSEntityDescription.insertNewObject(forEntityName: "Save", into: context)
-        
+        print("saving win mode as: \(Set1.winState)")
         entityGameState.setValue(Set1.winState, forKey: "isWinMode")
         entityGameState.setValue(Set1.atBatRawValue, forKey: "atBatRawValue")
         entityGameState.setValue(Set1.onDeckRawValue, forKey: "onDeckRawValue")
@@ -139,6 +139,7 @@ class LoadSaveCoreData {
         
         if resultsSave.last != nil {
             Set1.winState = (resultsSave.last!.value(forKeyPath: "isWinMode") as? Bool)!
+            print("loading win mode as: \(Set1.winState)")
             Set1.atBatRawValue = (resultsSave.last!.value(forKeyPath: "atBatRawValue") as? [String])!
             Set1.onDeckRawValue = (resultsSave.last!.value(forKeyPath: "onDeckRawValue") as? [String])!
             Set1.buildableRawValue = (resultsSave.last!.value(forKeyPath: "buildableRawValue") as? [String])!

@@ -168,7 +168,7 @@ public class GCHelper: NSObject, GKMatchmakerViewControllerDelegate, GKGameCente
             
             GKAchievement.report([achievement]) { (error) in
                 guard error == nil else {
-                    print("Error in reporting achievements: \(error)")
+                    print("Error in reporting achievements: \(error!)")
                     return
                 }
             }
