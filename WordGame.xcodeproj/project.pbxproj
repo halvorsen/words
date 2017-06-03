@@ -22,6 +22,7 @@
 		067C68AE1ECE550800CD1730 /* GameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067C68AD1ECE550800CD1730 /* GameCenter.swift */; };
 		06A454071EB65390007F3F71 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A454061EB65390007F3F71 /* TutorialViewController.swift */; };
 		06C25AE21EB81D670057DBFE /* LoadSaveCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */; };
+		06FA7C3E1EE253350079677E /* AppPreviewWord.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 06FA7C3D1EE253350079677E /* AppPreviewWord.mp4 */; };
 		B2D368942279922292AF58F0 /* Pods_WordGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 		067C68AD1ECE550800CD1730 /* GameCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCenter.swift; sourceTree = "<group>"; };
 		06A454061EB65390007F3F71 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		06C25AE11EB81D670057DBFE /* LoadSaveCoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadSaveCoreData.swift; sourceTree = "<group>"; };
+		06FA7C3D1EE253350079677E /* AppPreviewWord.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppPreviewWord.mp4; sourceTree = "<group>"; };
 		7045E0D0C946B88F494862AF /* Pods-WordGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordGame.release.xcconfig"; path = "Pods/Target Support Files/Pods-WordGame/Pods-WordGame.release.xcconfig"; sourceTree = "<group>"; };
 		B4E8BD1583B212D07DC2748D /* Pods_WordGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WordGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0B5207B00F4D246C1C0EAC4 /* Pods-WordGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WordGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WordGame/Pods-WordGame.debug.xcconfig"; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		0625A5051EAAB9C20064E97B = {
 			isa = PBXGroup;
 			children = (
+				06FA7C3D1EE253350079677E /* AppPreviewWord.mp4 */,
 				0625A5101EAAB9C20064E97B /* WordGame */,
 				0625A50F1EAAB9C20064E97B /* Products */,
 				0625A5261EAABA5C0064E97B /* Frameworks */,
@@ -196,6 +199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06FA7C3E1EE253350079677E /* AppPreviewWord.mp4 in Resources */,
 				0625A51F1EAAB9C20064E97B /* LaunchScreen.storyboard in Resources */,
 				0625A51C1EAAB9C20064E97B /* Assets.xcassets in Resources */,
 				0625A5171EAAB9C20064E97B /* Main.storyboard in Resources */,

@@ -105,11 +105,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(isWin)
         isFirstLoading = !UserDefaults.standard.bool(forKey: "launchedWordGameBefore")
         myLoad()
-        storeWholeState()
-        LoadSaveCoreData.sharedInstance.saveState()
+        print(isWin)
+       
         
     }
     private func myLoad() {
@@ -193,6 +193,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     var myMenu = MenuViewController()
     override func viewWillAppear(_ animated: Bool) {
+        print(isWin)
         doubleTap.numberOfTapsRequired = 2
         let a = LoadSaveCoreData.sharedInstance.loadBoost()
         if a != nil {
@@ -202,15 +203,18 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         if newGame {
             isWin = false
+            print(isWin)
             Set1.winState = false
             restart()
-        }
-        
-        if Set1.winState {
+            storeWholeState()
+            LoadSaveCoreData.sharedInstance.saveState()
+        } else if Set1.winState {
             isWin = true
-            
+            print(isWin)
             alreadyWinSequence()
         }
+         LoadSaveCoreData.sharedInstance.saveState()
+        print(isWin)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -350,10 +354,37 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
             }
         }
+//        var basket = [Int]()
+//        for tile in allTiles {
+//            if tilesInPlay.contains(tile) {
+//                if isSameColumn && tilesInPlay.count > 1 {
+//                    basket.append(tile.row!)
+//                    
+//                } else if isSameRow && tilesInPlay.count > 1  {
+//                    basket.append(tile.column!)
+//                }
+//            } else if tile.isLockedInPlace && !tile.isStarterBlock {
+//                if isSameColumn && tilesInPlay[0].column == tile.column {
+//                    basket.append(tile.row!)
+//                } else if isSameRow && tilesInPlay[0].row == tile.row {
+//                    basket.append(tile.column!)
+//                }
+//            }
+//        }
+//        if basket.count > 1 {
+//            for number in basket {
+//                if !basket.contains(number + 1) && !basket.contains(number - 1) {
+//                    isSameRow = false
+//                    isSameColumn = false
+//                    
+//                }
+//            }
+//        }
         
         if !isSameColumn && !isSameRow {
             callback(nil, true, tilesInPlay)
         }
+        
         if isSameRow {
             
             (bool1,bool2,bool3) = checkIfThereIsPriorTileInSameRow(row: smallestRow, column: smallestColumn)
@@ -383,8 +414,17 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             smallestColumn += 1
                             break outerLoop
                         } else if allTiles.count == count {
+                            var stray = false
+                            for tile in tilesInPlay {
+                                if !wordTiles.contains(tile) {
+                                    stray = true
+                                }
+                            }
+                           if stray {
                             
+                            callback(nil, true, tilesInPlay)
                             
+                        }
                             dontQuit = false
                             callback(word, true, tilesInPlay)
                         }
@@ -484,7 +524,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         isMainWordReal = false
         
         let bonusTiles = ["Q","X","J","Z","W"]
-        guard isFirstPlayFunc == true else {isFirstPlayFunc = true; return}
+        guard isFirstPlayFunc == true else {isFirstPlayFunc = true;print("guard1"); return}
         isFirstPlayFunc = false
         for tile in allTiles {
             if tile.myWhereInPlay == .board {
@@ -538,7 +578,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     refreshSizes()
                 }
                 
-                guard isReal(word: w.lowercased()) != nil else {wordTiles.removeAll(); return}
+                guard isReal(word: w.lowercased()) != nil else {wordTiles.removeAll(); print("guard2");return}
                 if isReal(word: w.lowercased())! && everythingChecksOutPerpendicular {
                     
                     for i in 0..<wordTiles.count {
@@ -1131,6 +1171,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             let alert = UIAlertController(title: word.uppercased(), message: "Must build off teal tiles", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
+            print("guard3")
             return nil
         }
         let checker = UITextChecker()
@@ -1440,9 +1481,21 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 } else {
                     if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board && once {
                         once = false
-                        movingTile = tile
+                        tile.removeFromSuperview()
+                        tile.alpha = 0.0
+                        onTheBoard -= 1
+                        
+                        tile.atBatTileOrder = 1
+                        view.addSubview(tile)
+                        tile.myWhereInPlay = .atBat
+                        dropTileWhereItBelongs(tile: tile)
+                        rearrangeAtBat()
+                        delay(bySeconds: 0.3) {
+                        tile.alpha = 1.0
+                        }
                     }
                 }
+             
             }
         case true:
             
@@ -1463,7 +1516,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         
                         view.addSubview(newTile)
                         dropTileWhereItBelongs(tile: newTile)
-                        // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
+                        storeWholeState()
                         LoadSaveCoreData.sharedInstance.saveState()
                     } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
                         once = false
@@ -1590,6 +1643,12 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         case .began:
             once = true
             for tile in allTiles {
+                if tile.frame.contains(gesture.location(in: view)) && (tile.myWhereInPlay == .atBat) {
+                    let alert = UIAlertController(title: "", message: "Your rack of letters is no longer full. Fill it with the tiles on the bottom", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    
+                }
                 if tile.frame.contains(gesture.location(in: view)) && (tile.myWhereInPlay == .onDeck || tile == pile) {
                     if tile.frame.contains(gesture.location(in: view)) && tile == pile && once {
                         guard pileOfTiles > 0 else {return}
@@ -1605,7 +1664,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         
                         view.addSubview(newTile)
                         dropTileWhereItBelongs(tile: newTile)
-                        // Set1.atBatRawValue.append(newTile.mySymbol.rawValue)
+                        storeWholeState()
                         LoadSaveCoreData.sharedInstance.saveState()
                     } else if tile.frame.contains(gesture.location(in: view)) && tile.myWhereInPlay == .onDeck && once {
                         once = false
@@ -1670,6 +1729,13 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     }
                     //break outer
                 } else {
+                    if tile.frame.contains(gesture.location(in: myBoard)) && tile.isLockedInPlace {
+                        let alert = UIAlertController(title: "", message: "The purple tiles on the board do not move, use rack tiles to build a word off a teal tile.", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                    
                     if tile.frame.contains(gesture.location(in: myBoard)) && !tile.isLockedInPlace && tile.myWhereInPlay == .board {
                         
                         iWantToScrollMyBoard = false
@@ -1889,7 +1955,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             tile.topOfBlock.layer.borderColor = UIColor.clear.cgColor
             
         case .atBat:
-            let order = tile.atBatTileOrder!
+            guard let order = tile.atBatTileOrder else {tile.atBatTileOrder = 1; rearrangeAtBat(); return}
             let x = 15*self.sw/375 + CGFloat(order)*49.7*self.sw/375
             let y = 29*self.sh/667 + myBoard.frame.maxY
             UIView.animate(withDuration: 0.3) {
@@ -2245,14 +2311,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     func storeWholeState() {
-        //Set1.winState = isWin
+        
         var atBatRawValue = [String]()
         var onDeckRawValue = [String]()
         var buildableRawValue = [String]()
         var startRawValue = [String]()
         var indexBuildable = [Int]()
         var indexStart = [Int]()
-        Set1.pileAmount = pileOfTiles
+        
         
         
         for tile in allTiles {
@@ -2273,7 +2339,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 onDeckRawValue.append(tile.mySymbol.rawValue)
             }
         }
-        
+        Set1.pileAmount = pileOfTiles
+        Set1.winState = isWin
         Set1.atBatRawValue = atBatRawValue
         Set1.onDeckRawValue = onDeckRawValue
         Set1.buildableRawValue = buildableRawValue
@@ -2307,9 +2374,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 if productId == "com.fooble.boosts" {
                     
                     self.amountOfBoosts += 3
-                    
-                    
-                    
                     self.storeWholeState()
                     LoadSaveCoreData.sharedInstance.saveState()
                     
@@ -2329,10 +2393,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         
     }
-    
-    
-    
-    
+  
 }
 
 

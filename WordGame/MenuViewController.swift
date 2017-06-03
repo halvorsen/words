@@ -30,9 +30,11 @@ class MenuViewController: UIViewController {
         
         wins = Set1.wins
         loses = Set1.loses
-        //self.delegate = presentingViewController! as? restartDelegate
         let pan = UIPanGestureRecognizer(target: self, action: #selector(MenuViewController.swipeFunc(_:)))
+        
         view.addGestureRecognizer(pan)
+        
+        
         view.backgroundColor = .white
         
         menuIcon.image = #imageLiteral(resourceName: "menuIcon")
@@ -124,10 +126,12 @@ class MenuViewController: UIViewController {
         }
         
     }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let yourVC = segue.destination as? GameViewController {
             if newGame {
             yourVC.newGame = true
+            yourVC.isWin = false
             }
         }
     }
