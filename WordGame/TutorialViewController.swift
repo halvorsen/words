@@ -16,24 +16,45 @@ class TutorialViewController: UIViewController {
     let slide3 = UIImageView()
     let slide4 = UIImageView()
     let myColor = CustomColor()
-    
+    let playerController = AVPlayerViewController()
     var viewOnScreen = UIImageView()
+    var button = UIButton()
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let yourVC = segue.destination as? GameViewController {
+           
+                yourVC.newGame = true
+                yourVC.isWin = false
+            
+        }
+    }
     
     func playerDidFinishPlaying(note: NSNotification) {
         print("Video Finished")
-        self.dismiss(animated: true, completion: nil)
+        let viewMask = UIView()
+        viewMask.frame = view.bounds
+        viewMask.backgroundColor = .white
+        view.addSubview(viewMask)
+        delay(bySeconds: 1.0) {
+            UIView.animate(withDuration: 1.0) {
+                viewMask.alpha = 0.0
+            }
+        }
+        playerController.dismiss(animated: true) {
+        self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
+        }
+       // self.dismiss(animated: true, completion: nil)
+        
     }
     
-    private func playVideo() {
+    @objc private func playVideo() {
         print("playVideo")
         guard let path = Bundle.main.path(forResource: "AppPreviewWord", ofType:"mp4") else {
             debugPrint("video.m4v not found")
             return
         }
         let player = AVPlayer(url: URL(fileURLWithPath: path))
-        let playerController = AVPlayerViewController()
+        
         playerController.player = player
         NotificationCenter.default.addObserver(self, selector: #selector(TutorialViewController.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)//videoPlayer.currentItem)
         present(playerController, animated: true) {
@@ -43,6 +64,16 @@ class TutorialViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        button.frame = CGRect(x: view.bounds.width/6, y: 7*view.bounds.height/10, width: 2*view.bounds.width/3, height: view.bounds.height/10)
+        button.titleLabel?.font = UIFont(name: "HelveticaNeue-Bold", size: 30)!
+        button.setTitleColor(myColor.purple, for: .normal)
+        button.alpha = 0.0
+        button.addTarget(self, action: #selector(TutorialViewController.playVideo), for: .touchUpInside)
+        button.setTitle("Demo", for: .normal)
+        button.layer.borderColor = myColor.purple.cgColor
+        button.layer.borderWidth = 2
+        button.layer.cornerRadius = 5
+        
         let panLeft = UISwipeGestureRecognizer(target: self, action: #selector(TutorialViewController.swipeFuncLeft(_:)))
         let panRight = UISwipeGestureRecognizer(target: self, action: #selector(TutorialViewController.swipeFuncRight(_:)))
         panLeft.direction = .left
@@ -64,6 +95,8 @@ class TutorialViewController: UIViewController {
             switch self.viewOnScreen {
             case self.slide1:
                 break
+            case self.slide4:
+                self.button.removeFromSuperview()
                 
             default:
                 self.slide2.frame.origin.x += self.sw
@@ -98,8 +131,18 @@ class TutorialViewController: UIViewController {
         case slide1: viewOnScreen = slide2
         case slide2: viewOnScreen = slide3
         case slide3: viewOnScreen = slide4
-        case slide4: delay(bySeconds: 0.5) {
-            self.playVideo()
+        self.view.addSubview(self.button)
+        UIView.animate(withDuration: 1.0) {
+            self.button.alpha = 1.0
+            }
+        case slide4:
+            UIView.animate(withDuration: 0.5) {
+            self.button.frame.origin.x -= self.sw
+            }
+            delay(bySeconds: 0.5) {
+            self.button.removeFromSuperview()
+            self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
+           // self.playVideo()
             
             }
         default: break
