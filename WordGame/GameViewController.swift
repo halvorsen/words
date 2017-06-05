@@ -10,6 +10,7 @@ import UIKit
 import SwiftyStoreKit
 
 class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate {
+    var tilesInPlay = [Tile]()
     var boostTimer = Timer()
     var myTimer = Timer()
     let progressHUD = ProgressHUD(text: "Loading")
@@ -26,7 +27,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     var wordTiles = [Tile]()
     var wordTilesPerpendicular = [Tile]()
     let pile = Tile()
-    var pileOfTiles = 25 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = pileOfTilesString} }
+    var pileOfTiles = 30 { didSet { pileOfTilesString = String(pileOfTiles); pile.text.text = pileOfTilesString} }
     var pileOfTilesString = "x15"
     var isNotSameTile = false
     let onDeckAlpha: CGFloat = 0.1
@@ -294,10 +295,12 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
     }
     
     private func findTheString(callback: (_ word: String?, _ rowWord: Bool, _ tilesInPlay: [Tile]) -> Void) {
-        var tilesInPlay = [Tile]()
+        var mainWordTiles = [Tile]()
+        tilesInPlay.removeAll()
         for tile in allTiles {
             if tile.myWhereInPlay == .board && tile.isLockedInPlace == false {
                 tilesInPlay.append(tile)
+                mainWordTiles.append(tile)
             }
         }
         guard tilesInPlay.count > 0 else {return}
@@ -334,14 +337,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                         if tile.row == smallestRow && tile.column == smallestColumn - 1 {
                             
                             smallestColumn -= 1
-                            tilesInPlay.append(tile)
+                            mainWordTiles.append(tile)
                         }
                     } else if isSameColumn {
                         
                         if tile.row == smallestRow - 1 && tile.column == smallestColumn {
                             
                             smallestRow -= 1
-                            tilesInPlay.append(tile)
+                            mainWordTiles.append(tile)
                         }
                     }
                     
@@ -372,32 +375,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 }
             }
         }
-//        var basket = [Int]()
-//        for tile in allTiles {
-//            if tilesInPlay.contains(tile) {
-//                if isSameColumn && tilesInPlay.count > 1 {
-//                    basket.append(tile.row!)
-//                    
-//                } else if isSameRow && tilesInPlay.count > 1  {
-//                    basket.append(tile.column!)
-//                }
-//            } else if tile.isLockedInPlace && !tile.isStarterBlock {
-//                if isSameColumn && tilesInPlay[0].column == tile.column {
-//                    basket.append(tile.row!)
-//                } else if isSameRow && tilesInPlay[0].row == tile.row {
-//                    basket.append(tile.column!)
-//                }
-//            }
-//        }
-//        if basket.count > 1 {
-//            for number in basket {
-//                if !basket.contains(number + 1) && !basket.contains(number - 1) {
-//                    isSameRow = false
-//                    isSameColumn = false
-//                    
-//                }
-//            }
-//        }
         
         if !isSameColumn && !isSameRow {
             callback(nil, true, tilesInPlay)
@@ -432,24 +409,14 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             smallestColumn += 1
                             break outerLoop
                         } else if allTiles.count == count {
-//                            var stray = false
-//                            for tile in tilesInPlay {
-//                                if !wordTiles.contains(tile) {
-//                                    stray = true
-//                                }
-//                            }
-//                           if stray {
-//                            
-//                            callback(nil, true, tilesInPlay)
-//                            
-//                        }
+
                             dontQuit = false
-                            callback(word, true, tilesInPlay)
+                            callback(word, true, mainWordTiles)
                         }
                         
                     } else if allTiles.count == count {
                         dontQuit = false
-                        callback(word, true, tilesInPlay)
+                        callback(word, true, mainWordTiles)
                     }
                     count += 1
                 }
@@ -481,7 +448,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             break outerLoop
                         } else if allTiles.count == count {
                             dontQuit = false
-                            callback(word, false, tilesInPlay)
+                            callback(word, false, mainWordTiles)
                         }
                         
                     } else if allTiles.count == count {
@@ -549,7 +516,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 
             }
         }
-        findTheString() { (word,isRowWord,tilesInPlay) -> Void in
+        findTheString() { (word,isRowWord,mainWordTiles) -> Void in
             if let w = word {
                 
                 lengthOfWord = wordTiles.count
@@ -587,7 +554,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     duplicateLetterAmount2 = repeat2
                 }
                 
-                let everythingChecksOutPerpendicular = perpendicularWords(isRowWord: isRowWord, tilesInPlay: tilesInPlay)
+                let everythingChecksOutPerpendicular = perpendicularWords(isRowWord: isRowWord, mainWordTiles: mainWordTiles)
                 myBoard.zoomOut() { () -> Void in
                     for tile in allTiles {
                         dropTileWhereItBelongs(tile: tile)
@@ -611,7 +578,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                     self.present(alert, animated: true, completion: nil)
                         return
                     }
-                    
+                    var notAlreadyWonThisGame = false
                     for i in 0..<wordTiles.count {
                         wordTiles[i].isBuildable = true
                         delay(bySeconds: 0.2*Double(i)+0.6) {
@@ -619,6 +586,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             
                             if self.wordTiles[i].isStarterBlock {
                                 self.wordTiles[i].isStarterBlock = false
+                                notAlreadyWonThisGame = true
                                 self.wordTiles[i].topOfBlock.backgroundColor = self.myColor.teal
                                 self.wordTiles[i].text.textColor = .white
                                 
@@ -662,7 +630,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                                         self.isWin = false
                                     }
                                 }
-                                if self.isWin {
+                                if self.isWin && notAlreadyWonThisGame {
                                     
                                     self.winSequence()
                                 }
@@ -946,7 +914,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         self.present(alert, animated: true, completion: nil)
     }
     var length = 1
-    private func perpendicularWords(isRowWord: Bool, tilesInPlay: [Tile]) -> Bool {
+    private func perpendicularWords(isRowWord: Bool, mainWordTiles: [Tile]) -> Bool {
         var everythingChecksOut = true
         var indexesOfWords = [Int]()
         var smallestRow = 16
@@ -956,7 +924,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         switch isRowWord {
             
         case true:
-            for tile in tilesInPlay {
+            for tile in mainWordTiles {
                 if tile.slotsIndex! - 1 > -1 {
                     if myBoard.slots[tile.slotsIndex! - 1].isOccupied {
                         indexesOfWords.append(tile.slotsIndex!)
@@ -1003,7 +971,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                             if tile.column! == smallestColumn && tile.row! == smallestRow {
                                 
                                 if !tile.isBuildable { perpedicularWordHasNewLetter = true }
-                                if tilesInPlay.contains(tile) {
+                                if mainWordTiles.contains(tile) {
                                     isAtLeastOneNewTile = true
                                 }
                                 word += tile.mySymbol.rawValue
@@ -1053,7 +1021,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             }
             
         case false:
-            for tile in tilesInPlay {
+            for tile in mainWordTiles {
                 
                 if tile.slotsIndex! - 15 > -1 {
                     if myBoard.slots[tile.slotsIndex! - 15].isOccupied {
@@ -1195,16 +1163,16 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         
     }
     
-    var tilesInPlay = [Tile]()
+    
     func isReal(word: String) -> Bool? {
         
         var isWordBuildable = false
         
-        for tile in allTiles {
-            if tile.myWhereInPlay == .board && tile.isLockedInPlace == false {
-                tilesInPlay.append(tile)
-            }
-        }
+//        for tile in allTiles {
+//            if tile.myWhereInPlay == .board && tile.isLockedInPlace == false {
+//                tilesInPlay.append(tile)
+//            }
+//        }
         
         for tile in allTiles {
             if tile.isBuildable {
@@ -1221,7 +1189,8 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
         }
         
         guard isWordBuildable == true else {
-            //          var isFirstPlayFunc = true
+            //       
+            isFirstPlayFunc = true
             let alert = UIAlertController(title: word.uppercased(), message: "Must build off teal tiles", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -1785,7 +1754,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
                 } else {
                     if tile.frame.contains(gesture.location(in: myBoard)) && tile.isLockedInPlace {
                         guard tile.topOfBlock.backgroundColor == myColor.purple else {return}
-                        let alert = UIAlertController(title: "", message: "The purple tiles on the board do not move, use rack tiles to build a word off a teal tile.", preferredStyle: UIAlertControllerStyle.alert)
+                        let alert = UIAlertController(title: "", message: "This tile on the board does not move, use rack tiles to build a word off a teal tile.", preferredStyle: UIAlertControllerStyle.alert)
                         alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                         
@@ -2351,7 +2320,7 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate, UIScrol
             slot.isOccupiedFromStart = false
         }
         
-        pileOfTiles = 25
+        pileOfTiles = 30
         myBoard.zoomOut(){}
         myLoad()
         for tile in allTiles {

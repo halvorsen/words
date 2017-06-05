@@ -22,9 +22,9 @@ class TutorialViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let yourVC = segue.destination as? GameViewController {
-           
-                yourVC.newGame = true
-                yourVC.isWin = false
+            
+            yourVC.newGame = true
+            yourVC.isWin = false
             
         }
     }
@@ -41,9 +41,9 @@ class TutorialViewController: UIViewController {
             }
         }
         playerController.dismiss(animated: true) {
-        self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
+            self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
         }
-       // self.dismiss(animated: true, completion: nil)
+        // self.dismiss(animated: true, completion: nil)
         
     }
     
@@ -132,21 +132,23 @@ class TutorialViewController: UIViewController {
         case slide2: viewOnScreen = slide3
         case slide3: viewOnScreen = slide4
         self.view.addSubview(self.button)
-        UIView.animate(withDuration: 1.0) {
-            self.button.alpha = 1.0
+        delay(bySeconds: 0.5) {
+            UIView.animate(withDuration: 1.0) {
+                self.button.alpha = 1.0
+            }
             }
         case slide4:
             UIView.animate(withDuration: 0.5) {
-            self.button.frame.origin.x -= self.sw
+                self.button.frame.origin.x -= self.sw
             }
             delay(bySeconds: 0.5) {
-            self.button.removeFromSuperview()
-            self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
-           // self.playVideo()
-            
+                self.button.removeFromSuperview()
+                self.performSegue(withIdentifier: "fromTutorialToGame", sender: self)
+                // self.playVideo()
+                
             }
         default: break
-     
+            
             
         }
     }
