@@ -103,7 +103,6 @@ class LoadSaveCoreData {
         catch { print(error) }
         
         let entityGameState = NSEntityDescription.insertNewObject(forEntityName: "Save", into: context)
-        print("saving win mode as: \(Set1.winState)")
         entityGameState.setValue(Set1.winState, forKey: "isWinMode")
         entityGameState.setValue(Set1.atBatRawValue, forKey: "atBatRawValue")
         entityGameState.setValue(Set1.onDeckRawValue, forKey: "onDeckRawValue")

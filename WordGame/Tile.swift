@@ -7,8 +7,6 @@
 //
 
 import UIKit
-//let sw = UIScreen.main.bounds.width
-//let sh = UIScreen.main.bounds.height
 
 class Tile: UIView {
     let myColor = CustomColor()
@@ -120,9 +118,9 @@ class Tile: UIView {
         }
         
     }
+    
     var isFirstInit = true
     init() {
-
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         self.frame = CGRect(x: 15*sw/375, y: 616*sh/667, width: 34*sw/375, height: 34*sw/375)
         self.isUserInteractionEnabled = true
@@ -133,18 +131,7 @@ class Tile: UIView {
         self.addSubview(text)
         changeBlockSize()
         setContents()
-
-        
-        
     }
-    
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        let touch = touches.first as! UITouch
-//                superview!.isUserInteractionEnabled = false
-//    }
-//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        superview!.isUserInteractionEnabled = true
-//    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
